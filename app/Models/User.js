@@ -36,7 +36,7 @@ class User extends Model {
   }
 
   person () {
-    return this.belongsTo('App/Model/Person')
+    return this.hasOne('App/Models/Person')
   }
 }
 
