@@ -1,5 +1,7 @@
 'use strict'
 
+const User = require('../../Models/User')
+
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
@@ -13,26 +15,18 @@ class PersonController {
   /**
    * Show a list of all people.
    * GET people
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
    */
   async index({ request, response, view }) {
 
-    const people = await Person.query().with('users').fetch()
+    const people = await Person.all()
+    //const people = await Person.query().with('users.profile').fetch()
 
-    return (people)
+    return people
   }
 
   /**
    * Create/save a new person.
    * POST people
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
    */
   async store({ request, response }) {
 
@@ -40,18 +34,13 @@ class PersonController {
 
     const people = await Person.create(data)
 
-    return (people)
+    return people
 
   }
 
   /**
    * Display a single person.
    * GET people/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
    */
   async show({ params, request, response, view }) {
 
@@ -59,16 +48,12 @@ class PersonController {
 
     const people = await Person.find(people_id)
 
-    return (people)
+    return people
   }
 
   /**
    * Update person details.
    * PUT or PATCH people/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
    */
   async update({ params, request, response }) {
 
@@ -90,10 +75,6 @@ class PersonController {
   /**
    * Delete a person with id.
    * DELETE people/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
    */
   async destroy({ params, request, response }) {
 

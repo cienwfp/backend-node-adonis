@@ -16,14 +16,46 @@
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
 
+// Route for authentication user
 Route
   .post('/session', 'SessionController.create')
 
+// Route for user
+
+/*
 Route
-  .post('/user/:people_id', 'UserController.create')
+  .get('/user', 'UserController.index')
+  .middleware('auth')
+
+Route
+  .get('/user/:user_id', 'UserController.show')
+  .middleware('auth')
+*/
+Route
+  .resource('user', 'UserController')
+  .apiOnly()
+  .middleware('auth')
+  .except('store')
+
+Route
+  .post('/user/:people_id', 'UserController.store')
+  .middleware('auth')
 
 
+
+//Route dor people
 Route
   .resource('people', 'PersonController')
   .apiOnly()
+  .middleware('auth')
 
+//Route for profile
+Route
+  .post('/profile/:user_id', 'ProfileController.store')
+  .middleware('auth')
+
+Route
+  .resource('profile', 'ProfileController')
+  .apiOnly()
+  .middleware('auth')
+  .except('store')

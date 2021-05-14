@@ -7,7 +7,7 @@ const Model = use('Model')
 const Hash = use('Hash')
 
 class User extends Model {
-  static boot () {
+  static boot() {
     super.boot()
 
     /**
@@ -20,23 +20,20 @@ class User extends Model {
       }
     })
   }
-
-  /**
-   * A relationship on tokens is required for auth to
-   * work. Since features like `refreshTokens` or
-   * `rememberToken` will be saved inside the
-   * tokens table.
-   *
-   * @method tokens
-   *
-   * @return {Object}
-   */
+  
   tokens () {
     return this.hasMany('App/Models/Token')
   }
 
   person () {
     return this.hasOne('App/Models/Person')
+  }
+
+  profile () {
+      return (this
+          .belongsToMany('App/Models/Profile', 'user_id', 'profile_id', 'id', 'id')
+          .pivotTable('user_profile_pivots')
+      )
   }
 }
 
