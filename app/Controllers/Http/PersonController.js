@@ -18,8 +18,12 @@ class PersonController {
    */
   async index({ request, response, view }) {
 
-    const people = await Person.all()
-    //const people = await Person.query().with('users.profile').fetch()
+    //const people = await Person.all()
+    const people = await Person
+      .query()
+      .with('users.profile')
+      .with('photos')
+      .fetch()
 
     return people
   }

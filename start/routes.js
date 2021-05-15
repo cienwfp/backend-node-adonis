@@ -22,15 +22,6 @@ Route
 
 // Route for user
 
-/*
-Route
-  .get('/user', 'UserController.index')
-  .middleware('auth')
-
-Route
-  .get('/user/:user_id', 'UserController.show')
-  .middleware('auth')
-*/
 Route
   .resource('user', 'UserController')
   .apiOnly()
@@ -59,3 +50,9 @@ Route
   .apiOnly()
   .middleware('auth')
   .except('store')
+
+Route
+  .resource('photos', 'PhotoController')
+  .apiOnly()
+  .middleware('auth')
+  .except('create', 'edit')
