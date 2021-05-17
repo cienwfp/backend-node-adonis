@@ -1,12 +1,11 @@
 'use strict'
 
-const User = require('../../Models/User')
-
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
 const Person = use("App/Models/Person")
+const Validation = require('../../../config/validation')
 
 /**
  * Resourceful controller for interacting with people
@@ -23,6 +22,7 @@ class PersonController {
       .query()
       .with('users.profile')
       .with('photos')
+      .with('address')
       .fetch()
 
     return people
@@ -33,8 +33,63 @@ class PersonController {
    * POST people
    */
   async store({ request, response }) {
+    let data_
 
-    const data = request.only(['name'])
+    const data = request.body
+
+    if (!data.cpf) {
+      data_ = await Person
+      .query()
+      .where(
+        {
+          'name': data.name,
+          'mae': data.mae
+        }
+      )
+      .fetch()
+
+    } else {
+      data_ = await Person
+      .query()
+      .where(
+        {
+          'name': data.name,
+          'mae': data.mae
+        }
+      )
+      .orWhere(
+        {
+          'cpf': data.cpf
+        }
+      )
+      .fetch()
+    } 
+
+    if (data_) {
+      return (
+        response
+          .status(409)
+          .send(
+            {
+              'mesage': 'People already registared',
+              ...data_
+            }
+          )
+      )
+    }
+    
+    if (!data.cpf) {
+      data.cpf = "00000000000"
+    } else {
+      const cpf = Validation.validationCFP(data.cpf)
+      if (cpf === false) {
+        return (
+          response
+            .status(400)
+            .send({ 'mesage': 'CPF is not valid' })
+        )
+      }
+    }
 
     const people = await Person.create(data)
 
@@ -46,7 +101,7 @@ class PersonController {
    * Display a single person.
    * GET people/:id
    */
-  async show({ params, request, response, view }) {
+  async show({ params }) {
 
     const people_id = params.people_id
 
@@ -59,13 +114,11 @@ class PersonController {
    * Update person details.
    * PUT or PATCH people/:id
    */
-  async update({ params, request, response }) {
+  async update({ params, request }) {
 
     const people_id = params.id
 
-    const data = request.only([
-      'name'
-    ])
+    const data = request.body
 
     const people = await Person.find(people_id)
 
@@ -92,7 +145,11 @@ class PersonController {
 
     await people.delete()
 
-    return(response.status(200).send('Deleted'))
+    return (
+      response
+        .status(200)
+        .send({ 'mesage': 'Deleted' })
+    )
   }
 }
 

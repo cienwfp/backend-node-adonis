@@ -7,7 +7,8 @@ class PersonSchema extends Schema {
   up () {
     this.create('people', (table) => {
       table.uuid('id').primary().unique()
-      table.string('name').notNullable()
+      table.string('name')
+      table.string('tipo_logradouro')
       table.timestamps()
     })
   }

@@ -21,18 +21,14 @@ Route
   .post('/session', 'SessionController.create')
 
 // Route for user
-
 Route
   .resource('user', 'UserController')
   .apiOnly()
   .middleware('auth')
   .except('store')
-
 Route
   .post('/user/:people_id', 'UserController.store')
   .middleware('auth')
-
-
 
 //Route dor people
 Route
@@ -51,8 +47,16 @@ Route
   .middleware('auth')
   .except('store')
 
+//Route for Photos
 Route
   .resource('photos', 'PhotoController')
   .apiOnly()
   .middleware('auth')
   .except('create', 'edit')
+
+//Route for Adress
+Route
+  .resource('address', 'AddressController')
+  .apiOnly()
+  .middleware('auth')
+  .except('edit')

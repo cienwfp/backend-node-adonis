@@ -47,6 +47,8 @@ class PhotoController {
    */
   async store ({ request, response }) {
 
+    let photo_base64_
+
     const photo = request.only(['people_id', 'photo_base64'])
 
     const people = await Person.find(photo.people_id)
@@ -55,9 +57,19 @@ class PhotoController {
       return ({ "status": 400, "mesage": "Not Found people" })
     }
 
-    const photo_ = await Photo.create(photo)
-
-    return photo_
+    for (photo_base64_ of photo.photo_base64) {
+     await Photo
+        .create(
+          {
+            'people_id':photo.people_id,
+            'photo_base64':photo_base64_
+          }
+        )
+    }
+  
+    return (
+      response.status(200).send({'mesage':'Photos saved'})
+    )
   }
 
   /**
