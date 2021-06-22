@@ -54,9 +54,21 @@ Route
   .middleware('auth')
   .except('create', 'edit')
 
-//Route for Adress
+//Route for Address
 Route
   .resource('address', 'AddressController')
   .apiOnly()
   .middleware('auth')
   .except('edit')
+
+//Route for Relationship
+
+Route
+  .resource('relationship', 'RelationshipPeopleToPersonController')
+  .apiOnly()
+  .middleware('auth')
+  .except(['show', 'edit', 'create', 'destroy'])
+
+Route
+  .delete('/relationship', 'RelationshipPeopleToPersonController.destroy')
+  .middleware('auth')

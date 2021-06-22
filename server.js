@@ -19,6 +19,10 @@
 
 const { Ignitor } = require('@adonisjs/ignitor')
 
+const providers = [
+  "app/providers/UpdateOrCreateProvider"
+]
+
 new Ignitor(require('@adonisjs/fold'))
   .appRoot(__dirname)
   .fireHttpServer()

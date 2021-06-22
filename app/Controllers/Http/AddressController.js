@@ -145,7 +145,7 @@ class AddressController {
       return (
         response
           .status(400)
-          .send({ 'mesage': 'Address not found' })
+          .send({ 'message': 'Address not found' })
       )
     }
 
@@ -154,7 +154,7 @@ class AddressController {
     return (
       response
         .status(200)
-        .send({ 'mesage': 'deleted' })
+        .send({ 'message': 'Deleted success' })
     )
   }
 }
