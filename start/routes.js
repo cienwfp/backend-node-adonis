@@ -62,7 +62,6 @@ Route
   .except('edit')
 
 //Route for Relationship
-
 Route
   .resource('relationship', 'RelationshipPeopleToPersonController')
   .apiOnly()
@@ -72,3 +71,10 @@ Route
 Route
   .delete('/relationship', 'RelationshipPeopleToPersonController.destroy')
   .middleware('auth')
+
+// Route for vehicle
+Route
+  .resource('vehicle', 'VehicleController')
+  .apiOnly()
+  .middleware('auth')
+  .except(['show', 'edit', 'create'])

@@ -87,18 +87,25 @@ class RelationshipPeopleToPersonController {
       }
 
       const dataUpdate = {
-        'relation': dados.relation,
+        relation: dados.relation
       }
 
       const exist = await RelationshipPeopleToPerson.findBy(dataConsulta)
 
       if (exist) {
-        exist.merge(dataUpdate).save()
+
+        exist.relation = dados.relation
+
+        exist.save()
+
         return (exist)
+
       } else {
+
         const newRelation = await RelationshipPeopleToPerson.create(dados)
 
         return (newRelation)
+      
       }
 
     } else {
@@ -153,7 +160,7 @@ class RelationshipPeopleToPersonController {
         return (
           response
             .status(200)
-            .send({'message': 'Deleted success'})
+            .send({ 'message': 'Deleted success' })
         )
 
       } else {
@@ -168,18 +175,20 @@ class RelationshipPeopleToPersonController {
       const relation = await RelationshipPeopleToPerson
         .query()
         .where(
-          {'personIdFirst': request._body.personIdFirst,
-          'personIdSecond': request._body.personIdSecond})
+          {
+            'personIdFirst': request._body.personIdFirst,
+            'personIdSecond': request._body.personIdSecond
+          })
         .fetch()
 
       if (relation) {
 
         await relation.rows[0].delete()
-        
+
         return (
           response
             .status(200)
-            .send({'message': 'Deleted success'})
+            .send({ 'message': 'Deleted success' })
         )
       } else {
 

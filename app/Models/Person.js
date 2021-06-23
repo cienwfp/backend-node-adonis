@@ -28,12 +28,16 @@ class Person extends Model {
     return this.hasMany('App/Models/Photo', 'id', 'people_id')
   }
 
-  address () {
+  address() {
       return (
         this.belongsToMany('App/Models/Address', 'people_id', 'address_id', 'id', 'id')
             .pivotTable('pivot_people_address')
       )
     }
+
+  vehicles() {
+    return this.hasMany('App/Models/Vehicle')
+  }
 }
 
 module.exports = Person
