@@ -20,7 +20,34 @@ class VehicleController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index({ request, response, view }) {
+  async index({ request, response }) {
+
+    if (request._body.placa === null) {
+      const vehicles = await Vehicle.all()
+      return (vehicles)
+
+    } else {
+      const vehicle = await Vehicle.findBy('placa', request._body.placa)
+
+      if (vehicle) {
+        if (vehicle.personId) {
+          const prorpeties = await Person.find(vehicle.personId)
+          return (
+            [vehicle, prorpeties]
+          )
+
+        } else {
+          return (vehicle)
+        }
+
+      } else {
+        return (
+          response
+            .status(404)
+          , send({ 'message': `Not found vehicle whit placa ${request._body.placa}` })
+        )
+      }
+    }
   }
 
   /**
@@ -40,6 +67,16 @@ class VehicleController {
         response
           .status(400)
           .send({ 'message': 'Not send placa' })
+      )
+    }
+
+    const vehicle = await Vehicle.findBy('placa', data.placa) 
+
+    if (vehicle) {
+      return (
+        response
+          .status(409)
+          .send({ 'message': 'Vehicle exist' })
       )
     }
 
@@ -75,7 +112,26 @@ class VehicleController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update({ params, request, response }) {
+  async update({ request, response }) {
+    const data = request.only(['placa', 'tipo', 'marca', 'modelo', 'personId'])
+    const vehicle = await Vehicle.findBy('placa', data.placa)
+
+    if (!vehicle) {
+      return (
+        response
+          .status(404)
+          .send({'message': `Not found vehicle with ${data.placa}`})
+      )
+    }
+
+    vehicle.merge(data)
+    await vehicle.save()
+
+    return (
+      response
+        .status(200)
+        .send({'message': 'Update vehicle sucess'})
+    )
   }
 
   /**
@@ -86,7 +142,24 @@ class VehicleController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy({ params, request, response }) {
+  async destroy({ request, response }) {
+    const vehicle = await Vehicle.findBy('placa', request._body.placa)
+
+    if (!vehicle) {
+      return (
+        response
+          .status(404)
+          .send({'message': `Not found vehicle with ${request._body.placa}`})
+      )
+    }
+
+    await vehicle.delete()
+
+    return (
+      response
+        .status(200)
+        .send({'message': 'Delete vehicle sucess'})
+    )
   }
 }
 

@@ -74,7 +74,14 @@ Route
 
 // Route for vehicle
 Route
-  .resource('vehicle', 'VehicleController')
-  .apiOnly()
+  .get('/vehicle', 'VehicleController.index')
   .middleware('auth')
-  .except(['show', 'edit', 'create'])
+Route
+  .post('/vehicle', 'VehicleController.store')
+  .middleware('auth')
+Route
+  .put('/vehicle', 'VehicleController.update')
+  .middleware('auth')
+Route
+  .delete('/vehicle', 'VehicleController.destroy')
+  .middleware('auth')
