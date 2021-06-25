@@ -23,6 +23,7 @@ class PersonController {
       .with('users.profile')
       .with('photos')
       .with('address')
+      .with('vehicles')
       .fetch()
 
     return people
@@ -35,17 +36,14 @@ class PersonController {
   async store({ request, response }) {
     let data_
 
-    const data = request.body
+    const data = request._body
 
     if (!data.cpf) {
+     
       data_ = await Person
       .query()
-      .where(
-        {
-          'name': data.name,
-          'mae': data.mae
-        }
-      )
+      .where({'name': data.name})
+      .andWhere({'mae': data.mae})
       .fetch()
 
     } else {
@@ -65,7 +63,8 @@ class PersonController {
       .fetch()
     } 
 
-    if (data_) {
+    console.log(data_)
+    if (data_.rows.length!==0) {
       return (
         response
           .status(409)
@@ -104,10 +103,16 @@ class PersonController {
   async show({ params }) {
 
     const people_id = params.people_id
+    const people = await Person
+    .query()
+    .where({'id':people_id})
+    .with('users.profile')
+    .with('photos')
+    .with('address')
+    .with('vehicles')
+    .fetch()
 
-    const people = await Person.find(people_id)
-
-    return people
+  return people
   }
 
   /**

@@ -36,7 +36,7 @@ class Person extends Model {
     }
 
   vehicles() {
-    return this.hasMany('App/Models/Vehicle')
+    return this.hasMany('App/Models/Vehicle', 'id', 'personId')
   }
 }
 
