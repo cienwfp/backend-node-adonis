@@ -20,7 +20,7 @@ class UserController {
     const people_id = params.people_id
     const data = request.only(["username", "email", "password"])
     const people = await Person.find(people_id)
-
+    
     if (!people) {
       return ({ "status": 400, "mesage": "Not Found people" })
     }
