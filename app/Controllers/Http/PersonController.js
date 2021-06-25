@@ -101,11 +101,10 @@ class PersonController {
    * GET people/:id
    */
   async show({ params }) {
-
-    const people_id = params.people_id
+    console.log(params)
     const people = await Person
     .query()
-    .where({'id':people_id})
+    .where({'id':params.id})
     .with('users.profile')
     .with('photos')
     .with('address')
