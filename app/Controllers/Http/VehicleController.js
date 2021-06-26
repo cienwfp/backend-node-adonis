@@ -42,7 +42,7 @@ class VehicleController {
         }
 
       } else {
-        Message.messageNotFound(`Not found vehicle whit placa ${request._body.placa}`)
+        return Message.messageNotFound(`Not found vehicle whit placa ${request._body.placa}`)
       }
     }
   }
@@ -60,13 +60,13 @@ class VehicleController {
     const data = request.only(['personId', 'placa', 'tipo', 'marca', 'modelo'])
 
     if (!data.placa) {
-      Message.messageNotAcceptable('Not send placa')
+      return Message.messageNotAcceptable('Not send placa')
     }
 
     const vehicle = await Vehicle.findBy('placa', data.placa)
 
     if (vehicle) {
-      Message.messageConflict('Vehicle exist')
+      return Message.messageConflict('Vehicle exist')
     }
 
     if (data.personId) {
@@ -74,7 +74,7 @@ class VehicleController {
       const people = await Person.find(data.personId)
 
       if (!people) {
-        Message.messageNotFound('Not found people')
+        return Message.messageNotFound('Not found people')
       }
 
       const vehicle = await Vehicle.create(data)
@@ -102,29 +102,13 @@ class VehicleController {
     const vehicle = await Vehicle.findBy('placa', data.placa)
 
     if (!vehicle) {
-<<<<<<< HEAD
-      return (
-        response
-          .status(404)
-          .send({ 'message': `Not found vehicle with ${data.placa}` })
-      )
-=======
-      Message.messageNotFound(`Not found vehicle with ${data.placa}`)
->>>>>>> 5aada35e694a49db5dbdef12601f28f4e534d3ea
+      return Message.messageNotFound(`Not found vehicle with ${data.placa}`)
     }
 
     vehicle.merge(data)
     await vehicle.save()
 
-<<<<<<< HEAD
-    return (
-      response
-        .status(200)
-        .send({ 'message': 'Update vehicle sucess' })
-    )
-=======
-    Message.messageOk('Update vehicle sucess')
->>>>>>> 5aada35e694a49db5dbdef12601f28f4e534d3ea
+    return Message.messageOk('Update vehicle sucess')
   }
 
   /**
@@ -139,29 +123,13 @@ class VehicleController {
     const vehicle = await Vehicle.findBy('placa', request._body.placa)
 
     if (!vehicle) {
-<<<<<<< HEAD
-      return (
-        response
-          .status(404)
-          .send({ 'message': `Not found vehicle with ${request._body.placa}` })
-      )
-=======
-      Message.messageNotFound(`Not found vehicle with ${request._body.placa}`)
->>>>>>> 5aada35e694a49db5dbdef12601f28f4e534d3ea
+      return Message.messageNotFound(`Not found vehicle with ${request._body.placa}`)
     }
 
     await vehicle.delete()
 
-<<<<<<< HEAD
-    return (
-      response
-        .status(200)
-        .send({ 'message': 'Delete vehicle sucess' })
-    )
-=======
-    Message.messageOk('Delete vehicle sucess')
+    return Message.messageOk('Delete vehicle sucess')
 
->>>>>>> 5aada35e694a49db5dbdef12601f28f4e534d3ea
   }
 }
 

@@ -1,4 +1,4 @@
-Module.exports = {
+module.exports = {
   messageOk:
     function (message) {
       return ({
