@@ -102,13 +102,29 @@ class VehicleController {
     const vehicle = await Vehicle.findBy('placa', data.placa)
 
     if (!vehicle) {
+<<<<<<< HEAD
+      return (
+        response
+          .status(404)
+          .send({ 'message': `Not found vehicle with ${data.placa}` })
+      )
+=======
       Message.messageNotFound(`Not found vehicle with ${data.placa}`)
+>>>>>>> 5aada35e694a49db5dbdef12601f28f4e534d3ea
     }
 
     vehicle.merge(data)
     await vehicle.save()
 
+<<<<<<< HEAD
+    return (
+      response
+        .status(200)
+        .send({ 'message': 'Update vehicle sucess' })
+    )
+=======
     Message.messageOk('Update vehicle sucess')
+>>>>>>> 5aada35e694a49db5dbdef12601f28f4e534d3ea
   }
 
   /**
@@ -123,13 +139,29 @@ class VehicleController {
     const vehicle = await Vehicle.findBy('placa', request._body.placa)
 
     if (!vehicle) {
+<<<<<<< HEAD
+      return (
+        response
+          .status(404)
+          .send({ 'message': `Not found vehicle with ${request._body.placa}` })
+      )
+=======
       Message.messageNotFound(`Not found vehicle with ${request._body.placa}`)
+>>>>>>> 5aada35e694a49db5dbdef12601f28f4e534d3ea
     }
 
     await vehicle.delete()
 
+<<<<<<< HEAD
+    return (
+      response
+        .status(200)
+        .send({ 'message': 'Delete vehicle sucess' })
+    )
+=======
     Message.messageOk('Delete vehicle sucess')
 
+>>>>>>> 5aada35e694a49db5dbdef12601f28f4e534d3ea
   }
 }
 
