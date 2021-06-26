@@ -92,8 +92,7 @@ class ProfileController {
     const profile = await Profile.find(params.id)
     await profile.delete()
 
-    return response.status(200).send({ 'message': 'deleted' })
+    return Message.messageOk('deleted')
   }
 }
-
 module.exports = ProfileController

@@ -111,7 +111,7 @@ class RelationshipPeopleToPersonController {
 
     } else {
 
-      Message.messageNotFound('Not found people in db. You have to create person before relationship')
+     return Message.messageNotFound('Not found people in db. You have to create person before relationship')
     }
   }
 
