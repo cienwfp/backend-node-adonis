@@ -20,7 +20,7 @@ class PhotoController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index () {
+  async index() {
     const photos = await Photo.all()
     return photos
   }
@@ -34,7 +34,7 @@ class PhotoController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async create ({ request, response, view }) {
+  async create({ request, response, view }) {
   }
 
   /**
@@ -45,7 +45,7 @@ class PhotoController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, response }) {
+  async store({ request, response }) {
 
     let photo_base64_
 
@@ -54,22 +54,20 @@ class PhotoController {
     const people = await Person.find(photo.people_id)
 
     if (!people) {
-      return ({ "status": 400, "mesage": "Not Found people" })
+      return Message.messageNotFound("Not Found people")
     }
 
     for (photo_base64_ of photo.photo_base64) {
-     await Photo
+      await Photo
         .create(
           {
-            'people_id':photo.people_id,
-            'photo_base64':photo_base64_
+            'people_id': photo.people_id,
+            'photo_base64': photo_base64_
           }
         )
     }
-  
-    return (
-      response.status(200).send({'mesage':'Photos saved'})
-    )
+
+    return Message.messageOk('Photos saved')
   }
 
   /**
@@ -81,7 +79,7 @@ class PhotoController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ params, request, response, view }) {
+  async show({ params, request, response, view }) {
 
     const photo = await Photo.find(params.id)
 
@@ -97,7 +95,7 @@ class PhotoController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async edit ({ params, request, response, view }) {
+  async edit({ params, request, response, view }) {
   }
 
   /**
@@ -108,7 +106,7 @@ class PhotoController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ params, request, response }) {
+  async update({ params, request, response }) {
 
     const photo = await Photo.find(params.id)
 
@@ -129,14 +127,12 @@ class PhotoController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, request, response }) {
+  async destroy({ params, request, response }) {
     const photo = await Photo.find(params.id)
 
     await photo.delete()
 
-    return (
-      response.status(200).send({'mesage':'Photo was delete'})
-    )
+    return Message.messageOk('Photo was delete')
   }
 }
 
