@@ -6,6 +6,7 @@
 
 const Person = use("App/Models/Person")
 const RelationshipPeopleToPerson = use("App/Models/RelationshipPeopleToPerson")
+const Message = require('../../Hooks/Message')
 
 /**
  * Resourceful controller for interacting with relationshippeopletopeople
@@ -105,16 +106,12 @@ class RelationshipPeopleToPersonController {
         const newRelation = await RelationshipPeopleToPerson.create(dados)
 
         return (newRelation)
-      
+
       }
 
     } else {
 
-      return (
-        response.
-          status(404).
-          send({ error: 'Not found people in db. You have to create person before relationship' })
-      )
+      Message.messageNotFound('Not found people in db. You have to create person before relationship')
     }
   }
 
@@ -157,18 +154,10 @@ class RelationshipPeopleToPersonController {
 
         } while (i < peoples.rows.length)
 
-        return (
-          response
-            .status(200)
-            .send({ 'message': 'Deleted success' })
-        )
+        Message.messageOk('Deleted success')
 
       } else {
-        return (
-          response
-            .status(400)
-            .send({ 'message': 'People not has relationship' })
-        )
+        Message.messageBadRequest('People not has relationship')
       }
 
     } else {
@@ -185,18 +174,11 @@ class RelationshipPeopleToPersonController {
 
         await relation.rows[0].delete()
 
-        return (
-          response
-            .status(200)
-            .send({ 'message': 'Deleted success' })
-        )
+        Message.messageOk('Deleted success')
+
       } else {
 
-        return (
-          response
-            .status(400)
-            .send({ 'message': 'People not has relationship' })
-        )
+        Message.messageBadRequest('People not has relationship')
       }
     }
 
