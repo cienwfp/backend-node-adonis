@@ -42,7 +42,7 @@ class VehicleController {
         }
 
       } else {
-        Message.messageNotFound(`Not found vehicle whit placa ${request._body.placa}`)
+        return Message.messageNotFound(`Not found vehicle whit placa ${request._body.placa}`)
       }
     }
   }
@@ -60,13 +60,13 @@ class VehicleController {
     const data = request.only(['personId', 'placa', 'tipo', 'marca', 'modelo'])
 
     if (!data.placa) {
-      Message.messageNotAcceptable('Not send placa')
+      return Message.messageNotAcceptable('Not send placa')
     }
 
     const vehicle = await Vehicle.findBy('placa', data.placa)
 
     if (vehicle) {
-      Message.messageConflict('Vehicle exist')
+      return Message.messageConflict('Vehicle exist')
     }
 
     if (data.personId) {
@@ -74,7 +74,7 @@ class VehicleController {
       const people = await Person.find(data.personId)
 
       if (!people) {
-        Message.messageNotFound('Not found people')
+        return Message.messageNotFound('Not found people')
       }
 
       const vehicle = await Vehicle.create(data)
@@ -102,13 +102,13 @@ class VehicleController {
     const vehicle = await Vehicle.findBy('placa', data.placa)
 
     if (!vehicle) {
-      Message.messageNotFound(`Not found vehicle with ${data.placa}`)
+      return Message.messageNotFound(`Not found vehicle with ${data.placa}`)
     }
 
     vehicle.merge(data)
     await vehicle.save()
 
-    Message.messageOk('Update vehicle sucess')
+    return Message.messageOk('Update vehicle sucess')
   }
 
   /**
@@ -123,12 +123,12 @@ class VehicleController {
     const vehicle = await Vehicle.findBy('placa', request._body.placa)
 
     if (!vehicle) {
-      Message.messageNotFound(`Not found vehicle with ${request._body.placa}`)
+      return Message.messageNotFound(`Not found vehicle with ${request._body.placa}`)
     }
 
     await vehicle.delete()
 
-    Message.messageOk('Delete vehicle sucess')
+    return Message.messageOk('Delete vehicle sucess')
 
   }
 }
