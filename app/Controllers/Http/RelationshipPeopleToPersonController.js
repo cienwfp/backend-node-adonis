@@ -154,10 +154,10 @@ class RelationshipPeopleToPersonController {
 
         } while (i < peoples.rows.length)
 
-        Message.messageOk('Deleted success')
+        return Message.messageOk('Deleted success')
 
       } else {
-        Message.messageBadRequest('People not has relationship')
+        return Message.messageBadRequest('People not has relationship')
       }
 
     } else {
@@ -174,11 +174,11 @@ class RelationshipPeopleToPersonController {
 
         await relation.rows[0].delete()
 
-        Message.messageOk('Deleted success')
+        return Message.messageOk('Deleted success')
 
       } else {
 
-        Message.messageBadRequest('People not has relationship')
+        return Message.messageBadRequest('People not has relationship')
       }
     }
 
