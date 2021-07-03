@@ -38,6 +38,11 @@ class Person extends Model {
   vehicles() {
     return this.hasMany('App/Models/Vehicle', 'id', 'personId')
   }
+
+  
+  armas() {
+    return this.hasMany('App/Models/Arma', 'id', 'personId')
+  }
 }
 
 module.exports = Person

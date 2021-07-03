@@ -85,3 +85,18 @@ Route
 Route
   .delete('/vehicle', 'VehicleController.destroy')
   .middleware('auth')
+
+  // Route for arma
+// Route for vehicle
+Route
+  .get('/arma', 'armaController.index')
+  .middleware('auth')
+Route
+  .post('/arma', 'armaController.store')
+  .middleware('auth')
+Route
+  .put('/arma', 'armaController.update')
+  .middleware('auth')
+Route
+  .delete('/arma', 'armaController.destroy')
+  .middleware('auth')
