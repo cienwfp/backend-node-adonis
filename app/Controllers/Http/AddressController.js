@@ -1,5 +1,7 @@
 'use strict'
 
+const { messageNotFound } = require('../../Hooks/Message')
+
 const Address = use('App/Models/Address')
 const People = use('App/Models/Person')
 
@@ -114,11 +116,7 @@ class AddressController {
     const address = await Address.find(params.id)
 
     if (!address) {
-      return (
-        response
-          .status(400)
-          .send({ 'mesage': 'Address not found' })
-      )
+      return Message.messageNotFound('Address not found')
     }
 
     const newAddress = request.body
@@ -142,20 +140,13 @@ class AddressController {
     const address = await Address.find(params.id)
 
     if (!address) {
-      return (
-        response
-          .status(400)
-          .send({ 'message': 'Address not found' })
-      )
+      return Message.messageNotFound('Address not found')
+
     }
 
     await address.delete()
 
-    return (
-      response
-        .status(200)
-        .send({ 'message': 'Deleted success' })
-    )
+    return Message.messageOk('Deleted success')
   }
 }
 

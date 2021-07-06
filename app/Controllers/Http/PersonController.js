@@ -6,6 +6,8 @@
 
 const Person = use("App/Models/Person")
 const Validation = require('../../../config/validation')
+const { messageNotFound } = require('../../Hooks/Message')
+const Message = require('../../Hooks/Message')
 
 /**
  * Resourceful controller for interacting with people
@@ -33,60 +35,46 @@ class PersonController {
    * Create/save a new person.
    * POST people
    */
-  async store({ request, response }) {
+  async store({ request }) {
     let data_
 
     const data = request._body
 
     if (!data.cpf) {
-     
+
       data_ = await Person
-      .query()
-      .where({'name': data.name})
-      .andWhere({'mae': data.mae})
-      .fetch()
+        .query()
+        .where({ 'name': data.name })
+        .andWhere({ 'mae': data.mae })
+        .fetch()
 
     } else {
       data_ = await Person
-      .query()
-      .where(
-        {
-          'name': data.name,
-          'mae': data.mae
-        }
-      )
-      .orWhere(
-        {
-          'cpf': data.cpf
-        }
-      )
-      .fetch()
-    } 
-
-    console.log(data_)
-    if (data_.rows.length!==0) {
-      return (
-        response
-          .status(409)
-          .send(
-            {
-              'mesage': 'People already registared',
-              ...data_
-            }
-          )
-      )
+        .query()
+        .where(
+          {
+            'name': data.name,
+            'mae': data.mae
+          }
+        )
+        .orWhere(
+          {
+            'cpf': data.cpf
+          }
+        )
+        .fetch()
     }
-    
+
+    if (data_.rows.length !== 0) {
+      return Message.messageConflict('People already registared')
+    }
+
     if (!data.cpf) {
       data.cpf = "00000000000"
     } else {
       const cpf = Validation.validationCFP(data.cpf)
       if (cpf === false) {
-        return (
-          response
-            .status(400)
-            .send({ 'mesage': 'CPF is not valid' })
-        )
+        return messageNotFound('CPF is not valid')
       }
     }
 
@@ -130,7 +118,7 @@ class PersonController {
     people.merge(data)
     await people.save()
 
-    return people
+    return Message.messageOk('Update people sucess')
 
   }
 
@@ -144,17 +132,12 @@ class PersonController {
 
     const people = await Person.find(people_id)
 
-    //if (people.user_id !== auth.user.id) {
-    //  return response.status(401).send({ error: 'Not authorized' })
-    //}
-
+    if (!people) {
+      return Message.messageNotFound('Not found people')
+    }
     await people.delete()
 
-    return (
-      response
-        .status(200)
-        .send({ 'mesage': 'Deleted' })
-    )
+    return Message.messageOk('Deleted sucess')
   }
 }
 
