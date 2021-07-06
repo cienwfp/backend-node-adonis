@@ -89,17 +89,18 @@ class PersonController {
    * GET people/:id
    */
   async show({ params }) {
-    console.log(params)
+    
     const people = await Person
-      .query()
-      .where({ 'id': params.id })
-      .with('users.profile')
-      .with('photos')
-      .with('address')
-      .with('vehicles')
-      .fetch()
+    .query()
+    .where({'id':params.id})
+    .with('users.profile')
+    .with('photos')
+    .with('address')
+    .with('vehicles')
+    .with('armas')
+    .fetch()
 
-    return people
+  return people
   }
 
   /**

@@ -33,7 +33,7 @@ class ProfileController {
    */
 
     const dados = request.only(['profile', 'unidade', 'carteira', 'rules'])
-    console.log(dados)
+    
     const user = await User.find(params.user_id)
 
     const profile = await Profile.findOrCreate(dados)
