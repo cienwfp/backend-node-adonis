@@ -32,7 +32,7 @@ class ProfileController {
    * Create/save a new profile.
    */
 
-    const dados = request.only(['profile', 'unidade', 'carteira', 'rules'])
+    const dados = request.only(['profile', 'unidade', 'carteira', 'rules', 'restritivo', 'posicional'])
     
     const user = await User.find(params.user_id)
 
@@ -43,6 +43,7 @@ class ProfileController {
     profile.user = await profile.users().fetch()
 
     return user
+    //return profile
 
   }
 
@@ -71,9 +72,9 @@ class ProfileController {
   async update({ params, request }) {
 
     const data = request.only([
-      'profile'
+      'profile', 'unidade', 'carteira', 'rules', 'restritivo', 'posicional'
     ])
-
+console.log(data)
     const profile = await Profile.find(params.id)
 
     profile.merge(data)

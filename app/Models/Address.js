@@ -19,7 +19,7 @@ class Address extends Model {
     
     people () {
         return (
-            this.belongsToMany('App/Models/Person', 'address_id', 'people_id', 'id', 'id')
+            this.belongsToMany('App/Models/Person', 'address_id', 'personId', 'id', 'id')
                 .pivotTable('pivot_people_address')
         )
     }

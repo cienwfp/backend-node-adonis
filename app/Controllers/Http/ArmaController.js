@@ -63,7 +63,7 @@ class ArmaController {
    */
   async store ({ request, response }) {
     
-      const data = request.only(['tipo arma', 'numero serie', 'numero ro', 'data ro', 'instituicao geradora ro', 'observacao', 'importador', 'pais origem', 'localidade apreensao', 'outras observacoes', 'nivel', 'usuario ultima atualizacao', 'data ltima atualizacao', 'status'])
+      const data = request.only(['tipo arma', 'numero serie', 'numero ro', 'data ro', 'instituicao geradora ro', 'observacao', 'importador', 'pais origem', 'localidade apreensao', 'outras observacoes', 'nivel', 'usuario ultima atualizacao', 'data ltima atualizacao', 'status', 'posicional', 'restritivo'])
   
       if (!data.Arma) {
         return Message.messageNotAcceptable('Not send arma')
@@ -88,7 +88,7 @@ class ArmaController {
         return (arma)
   
       } else {
-        const data = request.only(['tipo arma', 'numero serie', 'numero ro', 'data ro', 'instituicao geradora ro', 'observacao', 'importador', 'pais origem', 'localidade apreensao', 'outras observacoes', 'nivel', 'usuario ultima atualizacao', 'data ltima atualizacao', 'status'])
+        const data = request.only(['tipo arma', 'numero serie', 'numero ro', 'data ro', 'instituicao geradora ro', 'observacao', 'importador', 'pais origem', 'localidade apreensao', 'outras observacoes', 'nivel', 'usuario ultima atualizacao', 'data ltima atualizacao', 'status', 'posicional', 'restritivo'])
         const arma = await Arma.create(data)
         return (arma)
       }

@@ -24,7 +24,7 @@ Route
 Route
   .resource('user', 'UserController')
   .apiOnly()
-  .middleware('auth')
+  //.middleware('auth')
   .except('store')
 Route
   .post('/user/:people_id', 'UserController.store')

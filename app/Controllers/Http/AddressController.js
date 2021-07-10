@@ -52,7 +52,7 @@ class AddressController {
     const people_id = request
       .only(
         [
-          'people_id'
+          'personId'
         ]
       )
 
@@ -65,7 +65,7 @@ class AddressController {
         ]
       )
 
-    const people = await People.find(people_id.people_id)
+    const people = await People.find(personId.personId)
 
     console.log(people)
 

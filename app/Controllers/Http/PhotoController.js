@@ -49,7 +49,7 @@ class PhotoController {
 
     let photo_base64_
 
-    const photo = request.only(['personId', 'photo_base64'])
+    const photo = request.only(['personId', 'photo_base64', 'posicional', 'restritivo'])
 
     const people = await Person.find(photo.personId)
 
@@ -61,7 +61,7 @@ class PhotoController {
       await Photo
         .create(
           {
-            'people_id': photo.personId,
+            'personId': photo.personId,
             'photo_base64': photo_base64_
           }
         )
