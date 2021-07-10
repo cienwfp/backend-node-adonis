@@ -49,9 +49,9 @@ class PhotoController {
 
     let photo_base64_
 
-    const photo = request.only(['people_id', 'photo_base64'])
+    const photo = request.only(['personId', 'photo_base64'])
 
-    const people = await Person.find(photo.people_id)
+    const people = await Person.find(photo.personId)
 
     if (!people) {
       return Message.messageNotFound("Not Found people")
@@ -61,7 +61,7 @@ class PhotoController {
       await Photo
         .create(
           {
-            'people_id': photo.people_id,
+            'people_id': photo.personId,
             'photo_base64': photo_base64_
           }
         )
