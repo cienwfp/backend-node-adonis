@@ -2,6 +2,7 @@
 
 const Profile = use('App/Models/Profile')
 const User = use('App/Models/User')
+const Message = require('../../Hooks/Message')
 
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
@@ -33,7 +34,7 @@ class ProfileController {
    */
 
     const dados = request.only(['profile', 'unidade', 'carteira', 'rules', 'restritivo', 'posicional'])
-    
+
     const user = await User.find(params.user_id)
 
     const profile = await Profile.findOrCreate(dados)
@@ -74,7 +75,7 @@ class ProfileController {
     const data = request.only([
       'profile', 'unidade', 'carteira', 'rules', 'restritivo', 'posicional'
     ])
-console.log(data)
+    console.log(data)
     const profile = await Profile.find(params.id)
 
     profile.merge(data)
@@ -91,9 +92,17 @@ console.log(data)
   async destroy({ params, response }) {
 
     const profile = await Profile.find(params.id)
-    await profile.delete()
 
-    return Message.messageOk('deleted')
+    if (profile) {
+      await profile.delete()
+      return Message.messageOk('deleted')
+
+    } else {
+      return Message.messageNotFound(`Not Found profile ${params.id}`)
+    }
+
+
+
   }
 }
 module.exports = ProfileController

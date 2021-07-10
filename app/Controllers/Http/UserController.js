@@ -20,6 +20,7 @@ class UserController {
      */
 
     const personId = params.personId
+    console.log(personId)
     const data = request.only(["username", "email", "password"])
     const people = await Person.find(personId)
 
@@ -42,7 +43,7 @@ class UserController {
 
     /**
      * Show all profile relationship whit user
-     * GET /user/:id
+     * GET /user/:
      */
 
     let userProfile
@@ -93,6 +94,7 @@ class UserController {
     await user.delete()
 
     return Message.messageUnauthorized('Deleted')
+
   }
 }
 
