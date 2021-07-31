@@ -89,14 +89,14 @@ Route
   // Route for arma
 // Route for vehicle
 Route
-  .get('/arma', 'armaController.index')
+  .get('/arma', 'ArmaController.index')
   //.middleware('auth')
 Route
-  .post('/arma', 'armaController.store')
-  //.middleware('auth')
+  .post('/arma', 'ArmaController.store')
+  .middleware('auth')
 Route
-  .put('/arma', 'armaController.update')
-  //.middleware('auth')
+  .put('/arma', 'ArmaController.update')
+  .middleware('auth')
 Route
-  .delete('/arma', 'armaController.destroy')
-  //.middleware('auth')
+  .delete('/arma', 'ArmaController.destroy')
+  .middleware('auth')

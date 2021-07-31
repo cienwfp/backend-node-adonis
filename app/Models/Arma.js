@@ -15,7 +15,7 @@ class Arma extends Model {
         return false;
     }
     static get table() {
-        return 'arma'
+        return 'armas'
     }
 }
 module.exports = Arma

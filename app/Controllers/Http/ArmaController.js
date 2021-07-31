@@ -1,7 +1,8 @@
 'use strict'
 
 const Person = use('App/Models/Person')
-const Vehicle = use('App/Models/Arma')
+const Arma = use('App/Models/Arma')
+const { messageBadRequest } = require('../../Hooks/Message')
 const Message = require('../../Hooks/Message')
 
 
@@ -15,14 +16,19 @@ class ArmaController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({ request, response, view }) {
+  async index({ request }) {
 
-    if (request._body.arma === null) {
-      const vehicles = await Arma.all()
+    if ((!request._body.numero_serie ||
+      request._body.numero_serie === null) && 
+      !request._body.tipo_arma) {
+
+      const armas = await Arma.all()
       return (armas)
 
-    } else {
-      const vehicle = await Arma.findBy('arma', request._body.arma)
+    } 
+    if (request._body.numero_serie) {
+
+      const arma = await Arma.findBy('numero_serie', request._body.numero_serie)
 
       if (arma) {
         if (arma.personId) {
@@ -36,21 +42,22 @@ class ArmaController {
         }
 
       } else {
-        return Message.messageNotFound(`Not found arma ${request._body.arma}`)
+        return Message.messageNotFound(`Not found weapon with numero serie ${request._body.numero_serie}`)
       }
-    }  
-  }
+    }
 
-  /**
-   * Render a form to be used for creating a new arma.
-   * GET armas/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
+    if (request._body.tipo_arma) {
+      const armas = await Arma  
+        .query()
+        .where('tipo_arma', request._body.tipo_arma)
+        .fetch()
+
+      if (armas.rows.length === 0) {
+        return Message.messageNotFound(`Not found weapon of the type ${request._body.tipo_arma}`)
+      } else {
+        return armas
+      }
+    }
   }
 
   /**
@@ -61,84 +68,113 @@ class ArmaController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, response }) {
-    
-      const data = request.only(['tipo arma', 'numero serie', 'numero ro', 'data ro', 'instituicao geradora ro', 'observacao', 'importador', 'pais origem', 'localidade apreensao', 'outras observacoes', 'nivel', 'usuario ultima atualizacao', 'data ltima atualizacao', 'status', 'posicional', 'restritivo'])
-  
-      if (!data.Arma) {
-        return Message.messageNotAcceptable('Not send arma')
-      }
-  
-      const arma = await Arma.findBy('arma', data.arma)
-  
-      if (arma) {
-        return Message.messageConflict('Arma exist')
-      }
-  
-      if (data.personId) {
-  
-        const people = await Person.find(data.personId)
-  
-        if (!arma) {
-          return Message.messageNotFound('Not found arma')
-        }
-  
-        const arma = await Arma.create(data)
-  
-        return (arma)
-  
-      } else {
-        const data = request.only(['tipo arma', 'numero serie', 'numero ro', 'data ro', 'instituicao geradora ro', 'observacao', 'importador', 'pais origem', 'localidade apreensao', 'outras observacoes', 'nivel', 'usuario ultima atualizacao', 'data ltima atualizacao', 'status', 'posicional', 'restritivo'])
-        const arma = await Arma.create(data)
-        return (arma)
-      }
-  
-    }  
+  async store({ request, auth, response }) {
 
-  /**
-   * Display a single arma.
-   * GET armas/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async show ({ params, request, response, view }) {
-  }
+    const data = request.only(
+      [
+        'personId',
+        'tipo_arma',
+        'numero_serie',
+        'numero_ro',
+        'data_ro',
+        'instituicao_geradora_ro',
+        'observacao',
+        'importador',
+        'pais_origem',
+        'localidade_apreensao',
+        'outras_observacoes',
+        'nivel',
+        'status',
+        'posicional',
+        'restritivo'
+      ]
+    )
 
-  /**
-   * Render a form to update an existing arma.
-   * GET armas/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit ({ params, request, response, view }) {
+    if (!data.tipo_arma) {
+      return Message.messageNotAcceptable('Not send weapon')
+    }
+
+    if (data.numero_serie !== null) {
+      const arma_ = await Arma.findBy('numero_serie', data.numero_serie)
+
+      if (arma_) {
+        return Message.messageConflict('Weapon exist')
+      }
+
+    }
+
+    if (data.personId) {
+
+      const people = await Person.find(data.personId)
+
+      if (!people) {
+        return Message.messageNotFound('Not found personId')
+      }
+
+      data.usuario_ultima_atualizacao = auth.user.username
+
+      const arma__ = await Arma.create(data)
+
+      return Message.messageOk('Weapon create sucess')
+
+    } else {
+
+      data.usuario_ultima_atualizacao = auth.user.username
+      const arma_ = await Arma.create(data)
+      return Message.messageOk('Weapon create sucess')
+
+    }
+
   }
 
   /**
    * Update arma details.
-   * PUT or PATCH armas/:id
+   * PUT with ID in the body of the request
    *
    * @param {object} ctx
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ params, request, response }) {
+  async update({request, auth}) {
+
+    const data = request.body
+
+    if (!data.id) {
+      return messageNotAcceptable('send id of the weapon')
+    }
+
+    const arma = await Arma.find(data.id)
+
+    data.usuario_ultima_atualizacao = auth.user.username
+
+    arma.merge(data)
+    await arma.save()
+
+    return Message.messageOk('Update weapon sucess')
+
   }
 
   /**
    * Delete a arma with id.
-   * DELETE armas/:id
+   * DELETE armas/
    *
    * @param {object} ctx
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, request, response }) {
+  async destroy({request}) {
+
+    const armaId = request.body.id
+
+    const arma = await Arma.find(armaId)
+
+    if (!arma) {
+      return Message.messageNotFound('Not found weapon')
+    }
+    await arma.delete()
+
+    return Message.messageOk('Deleted sucess')
+
   }
 }
 

@@ -26,6 +26,7 @@ class PersonController {
       .with('photos')
       .with('address')
       .with('vehicles')
+      .with('armas')
       .fetch()
 
     return people
