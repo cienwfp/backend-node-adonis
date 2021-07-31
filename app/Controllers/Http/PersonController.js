@@ -109,11 +109,11 @@ class PersonController {
    */
   async update({ params, request }) {
 
-    const people_id = params.id
+    const personId = params.id
 
     const data = request.body
 
-    const people = await Person.find(people_id)
+    const people = await Person.find(personId)
 
     people.merge(data)
     await people.save()
@@ -128,9 +128,9 @@ class PersonController {
    */
   async destroy({ params, request, response }) {
 
-    const people_id = params.id
+    const personId = params.id
 
-    const people = await Person.find(people_id)
+    const people = await Person.find(personId)
 
     if (!people) {
       return Message.messageNotFound('Not found people')

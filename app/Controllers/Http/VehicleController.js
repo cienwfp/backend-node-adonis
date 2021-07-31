@@ -57,7 +57,7 @@ class VehicleController {
    */
   async store({ request, response }) {
 
-    const data = request.only(['personId', 'placa', 'tipo', 'marca', 'modelo', 'cor', 'obs','pais', 'uf', 'municipio', 'identificador', 'ano_fabricacao', 'marcas_visiveis', 'proprietario', 'real_condutor', 'instituicao_proprietaria', 'usuario_ultima_alteracao', 'status',])
+    const data = request.only(['personId', 'placa', 'tipo', 'marca', 'modelo', 'cor', 'obs','pais', 'uf', 'municipio', 'identificador', 'ano_fabricacao', 'marcas_visiveis', 'proprietario', 'real_condutor', 'instituicao_proprietaria', 'usuario_ultima_alteracao', 'status','posicional', 'restritivo'])
 
     if (!data.placa) {
       return Message.messageNotAcceptable('Not send placa')
@@ -82,7 +82,7 @@ class VehicleController {
       return (vehicle)
 
     } else {
-      const data = request.only(['placa', 'tipo', 'marca', 'modelo', 'cor', 'obs','pais', 'uf', 'municipio', 'identificador', 'ano_fabricacao', 'marcas_visiveis', 'proprietario', 'real_condutor', 'instituicao_proprietaria', 'usuario_ultima_alteracao', 'status',])
+      const data = request.only(['placa', 'tipo', 'marca', 'modelo', 'cor', 'obs','pais', 'uf', 'municipio', 'identificador', 'ano_fabricacao', 'marcas_visiveis', 'proprietario', 'real_condutor', 'instituicao_proprietaria', 'usuario_ultima_alteracao', 'status', 'posicional', 'restritivo'])
       const vehicle = await Vehicle.create(data)
       return (vehicle)
     }

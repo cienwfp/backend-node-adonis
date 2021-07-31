@@ -19,21 +19,22 @@ class UserController {
      * POST user/:user_id
      */
 
-    const people_id = params.people_id
+    const personId = params.personId
+    console.log(personId)
     const data = request.only(["username", "email", "password"])
-    const people = await Person.find(people_id)
+    const people = await Person.find(personId)
 
     if (!people) {
       return Message.messageNotFound('Not Found people')
     }
 
-    const user = await User.findBy('people_id', people_id)
+    const user = await User.findBy('personId', personId)
 
     if (user) {
       return Message.messageBadRequest("This people exist user")
     }
 
-    const user_ = await User.create({ 'people_id': people_id, ...data })
+    const user_ = await User.create({ 'personId': personId, ...data })
 
     return user_
   }
@@ -42,7 +43,7 @@ class UserController {
 
     /**
      * Show all profile relationship whit user
-     * GET /user/:id
+     * GET /user/:
      */
 
     let userProfile
@@ -93,6 +94,7 @@ class UserController {
     await user.delete()
 
     return Message.messageUnauthorized('Deleted')
+
   }
 }
 
