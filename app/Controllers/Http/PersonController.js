@@ -89,9 +89,28 @@ class PersonController {
    * Display a single person.
    * GET people/:id
    */
-  async show({ params }) {
-    
-    const people = await Person
+  async show({ request }) {
+
+    if (request._body.id) {
+      const people = await Person
+        .query()
+        .where('id', request._body.id)
+        .with('users.profile')
+        .with('photos')
+        .with('address')
+        .with('vehicles')
+        .with('armas')
+        .fetch()
+
+      if (people.rows.length === 0) {
+        return Message.messageNotFound(`Not found people`)
+      } else {
+
+        return people
+      }
+    }
+
+    /*const people = await Person
     .query()
     .where({'id':params.id})
     .with('users.profile')
@@ -101,21 +120,21 @@ class PersonController {
     .with('armas')
     .fetch()
 
-  return people
+  return people*/
   }
 
   /**
    * Update person details.
    * PUT or PATCH people/:id
    */
-  async update({ params, request }) {
-
-    const personId = params.id
+  async update({ request }) {
 
     const data = request.body
-
-    const people = await Person.find(personId)
-
+    const people = await Person.find(data.id)
+    
+    if (!people) {
+      return Message.messageNotFound('Not found people')
+    }
     people.merge(data)
     await people.save()
 
