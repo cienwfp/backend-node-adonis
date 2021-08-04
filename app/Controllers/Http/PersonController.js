@@ -19,8 +19,8 @@ class PersonController {
    */
   async index({ request, response, view }) {
 
-    //const people = await Person.all()
     const people = await Person
+    //const people = await Person
       .query()
       .with('users.profile')
       .with('photos')
@@ -146,11 +146,14 @@ class PersonController {
    * Delete a person with id.
    * DELETE people/:id
    */
-  async destroy({ params, request, response }) {
+  async destroy({ request, response }) {
 
-    const personId = params.id
+    //const personId = params.id
 
-    const people = await Person.find(personId)
+    //const people = await Person.find(personId)
+    const peopleId = request.body.id
+
+    const people = await Person.find(peopleId)
 
     if (!people) {
       return Message.messageNotFound('Not found people')
@@ -158,6 +161,9 @@ class PersonController {
     await people.delete()
 
     return Message.messageOk('Deleted sucess')
+
+    
+
   }
 }
 

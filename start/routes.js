@@ -30,26 +30,28 @@ Route
   .post('/user/:personId', 'UserController.store')
   .middleware('auth')
 
-//Route for people
+//Route for people all
 Route
-//  .resource('/people', 'PersonController')
-//.apiOnly()
-//.middleware('auth')
+    .resource('/people', 'PersonController')
+    .apiOnly()
+    .middleware('auth')
+    .except(['show', 'edit', 'create', 'destroy'])
 
 //Route for single people
 Route
-  .get('/people', 'PersonController.show')
-  .middleware('auth')
-
-//Route for all people
-Route
-.get('/people, PersonController.index')
-.middleware('auth')
+    .get('/people', 'PersonController.show')
+    .middleware('auth')
 
 //Route for update people
 Route
   .put('/people', 'PersonController.update')
   .middleware('auth')
+
+Route
+  .delete('/people', 'PersonController.destroy')
+  .middleware('auth')
+
+
 //Route for profile
 Route
   .post('/profile/:user_id', 'ProfileController.store')
