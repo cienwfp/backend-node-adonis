@@ -21,26 +21,47 @@ Route
   .post('/session', 'SessionController.create')
 
 // Route for user
+//Route
+//  .resource('user', 'UserController')
+//  .apiOnly()
+//  .middleware('auth')
+//  .except(['store'])
+
 Route
-  .resource('user', 'UserController')
-  .apiOnly()
+  .post('/user', 'UserController.store')
   .middleware('auth')
-  .except('store')
+
 Route
-  .post('/user/:personId', 'UserController.store')
+  .get('/users', 'UserController.index')
+  .middleware('auth')
+
+Route
+  .get('/user', 'UserController.show')
+  .middleware('auth')
+
+  Route
+  .put('/user', 'UserController.update')
   .middleware('auth')
 
 //Route for people all
-Route
-    .resource('/people', 'PersonController')
-    .apiOnly()
-    .middleware('auth')
-    .except(['show', 'edit', 'create', 'destroy'])
+//Route
+//.resource('/people', 'PersonController')
+//.apiOnly()
+//.middleware('auth')
+//.except(['index', 'edit', 'create', 'destroy', 'show'])
 
-//Route for single people
 Route
-    .get('/people', 'PersonController.show')
-    .middleware('auth')
+  .post('/people', 'PersonController.store')
+  .middleware('auth')
+
+  Route
+  .get('/people', 'PersonController.index')
+  .middleware('auth')
+
+Route
+  .get('/person', 'PersonController.show')
+  .middleware('auth')
+
 
 //Route for update people
 Route
