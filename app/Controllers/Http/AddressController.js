@@ -1,9 +1,10 @@
 'use strict'
 
-const { messageNotFound } = require('../../Hooks/Message')
 
 const Address = use('App/Models/Address')
 const People = use('App/Models/Person')
+const { add } = require('@adonisjs/framework/src/Route/Store')
+const Message = require('../../Hooks/Message')
 
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
@@ -36,8 +37,8 @@ class AddressController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async create({ request }) {
-  }
+  // async create({ request }) {
+  // }
 
   /**
    * Create/save a new address.
@@ -48,15 +49,17 @@ class AddressController {
    * @param {Response} ctx.response
    */
   async store({ request, response }) {
-
-    const people_id = request
+    const personId = request
       .only(
         [
           'personId'
         ]
       )
+    if (!personId.personId) {
+      return Message.messageNotAcceptable('Not send personId')
+    }
 
-    const dataAdress = request
+    const data = request
       .only(
         [
           'tipo_logradouro',
@@ -67,16 +70,22 @@ class AddressController {
 
     const people = await People.find(personId.personId)
 
-    console.log(people)
+    if (!people) {
+      return Message.messageNotFound('Not found personId')
+    }
 
-    const address = await Address.findOrCreate(dataAdress)
+    const address = await Address.findOrCreate(data)
 
     await people.address().attach(address.id)
 
     people.address = await people.address().fetch()
 
-    return people
+
+    return Message.messageOk('Address create sucess')
   }
+  //return Message.messageConflict('People already registared')  
+
+
 
   /**
    * Display a single address.
@@ -87,9 +96,23 @@ class AddressController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show({ params, request, response, view }) {
-    const address = await Address.find(params.id)
-    return address
+  async show({ request, response, view }) {
+   // const address = await Address.find(params.id)
+    //return address
+    if (request._body.id) {
+      const address = await Address
+        .query()
+        .where('id', request._body.id)
+        .with('people')          
+        .fetch()
+
+      if (address.rows.length === 0) {
+        return Message.messageNotFound(`Not found address`)
+      } else {
+
+        return address
+      }
+    }
   }
 
   /**
@@ -101,8 +124,8 @@ class AddressController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async edit({ params, request, response, view }) {
-  }
+ // async edit({ params, request, response, view }) {
+ // }
 
   /**
    * Update address details.
@@ -112,7 +135,8 @@ class AddressController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update({ params, request, response }) {
+  async update({ request, response }) {
+    /*
     const address = await Address.find(params.id)
 
     if (!address) {
@@ -126,6 +150,17 @@ class AddressController {
     await address.save()
 
     return address
+    */
+    const data = request.body
+    const address = await Address.find(data.id)
+    
+    if (!address) {
+      return Message.messageNotFound('Not found address')
+    }
+    address.merge(data)
+    await address.save()
+
+    return Message.messageOk('Update address sucess')
   }
 
   /**
@@ -136,7 +171,8 @@ class AddressController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy({ params, request, response }) {
+  async destroy({ request, response }) {
+   /*
     const address = await Address.find(params.id)
 
     if (!address) {
@@ -147,6 +183,18 @@ class AddressController {
     await address.delete()
 
     return Message.messageOk('Deleted success')
+    */
+    const addressId = request.body.id
+
+    const address = await Address.find(addressId)
+
+    if (!address) {
+      return Message.messageNotFound('Not found address')
+    }
+    await address.delete()
+
+    return Message.messageOk('Deleted sucess')
+
   }
 }
 

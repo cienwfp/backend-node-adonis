@@ -43,6 +43,10 @@ Route
   .put('/user', 'UserController.update')
   .middleware('auth')
 
+  Route
+  .delete('/user', 'UserController.destroy')
+  .middleware('auth')
+
 //Route for people all
 //Route
 //.resource('/people', 'PersonController')
@@ -92,11 +96,38 @@ Route
   .except('create', 'edit')
 
 //Route for Address
+//Route for Address create
 Route
-  .resource('address', 'AddressController')
-  .apiOnly()
-  .middleware('auth')
-  .except('edit')
+.post('address', 'AddressController.store')
+.middleware('auth')
+
+//Route for Adress all
+Route
+.get('addresses', 'AddressController.index')
+.middleware('auth')
+
+//Route for Address
+Route
+.get('address', 'AddressController.show')
+.middleware('auth')
+
+//Route for Address update
+Route
+.put('address', 'AddressController.update')
+.middleware('auth')
+
+//Route for Address delete
+Route
+.delete('address', 'AddressController.destroy')
+.middleware('auth')
+
+//Route
+ // .resource('address', 'AddressController')
+ // .apiOnly()
+ // .middleware('auth')
+ // .except('edit')
+
+ 
 
 //Route for Relationship
 Route

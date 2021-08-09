@@ -96,7 +96,7 @@ class UserController {
 
   async update({ request }) {
 
-    const data = request.body
+    const data = request.body.id
     const user = await User.find(data.id)
     
     if (!user) {
@@ -109,7 +109,7 @@ class UserController {
 
   }
 
-  async destroy({ params, auth, response }) {
+  async destroy({ request, auth, response }) {
 
     /**
      * Delete user
@@ -117,7 +117,9 @@ class UserController {
      */
     var userAuth__
 
-    const user = await User.find(params.id)
+    //const user = await User.find(params.id)
+    const data = request.body
+    const user = await User.find(data.id)
 
     //if (people.user_id !== auth.user.id) {
     //  return response.status(401).send({ error: 'Not authorized' })
