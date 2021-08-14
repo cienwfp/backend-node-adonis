@@ -21,26 +21,51 @@ Route
   .post('/session', 'SessionController.create')
 
 // Route for user
+//Route
+//  .resource('user', 'UserController')
+//  .apiOnly()
+//  .middleware('auth')
+//  .except(['store'])
+
 Route
-  .resource('user', 'UserController')
-  .apiOnly()
+  .post('/user', 'UserController.store')
   .middleware('auth')
-  .except('store')
+
 Route
-  .post('/user/:personId', 'UserController.store')
+  .get('/users', 'UserController.index')
+  .middleware('auth')
+
+Route
+  .get('/user', 'UserController.show')
+  .middleware('auth')
+
+  Route
+  .put('/user', 'UserController.update')
+  .middleware('auth')
+
+  Route
+  .delete('/user', 'UserController.destroy')
   .middleware('auth')
 
 //Route for people all
-Route
-    .resource('/people', 'PersonController')
-    .apiOnly()
-    .middleware('auth')
-    .except(['show', 'edit', 'create', 'destroy'])
+//Route
+//.resource('/people', 'PersonController')
+//.apiOnly()
+//.middleware('auth')
+//.except(['index', 'edit', 'create', 'destroy', 'show'])
 
-//Route for single people
 Route
-    .get('/people', 'PersonController.show')
-    .middleware('auth')
+  .post('/people', 'PersonController.store')
+  .middleware('auth')
+
+  Route
+  .get('/people', 'PersonController.index')
+  .middleware('auth')
+
+Route
+  .get('/person', 'PersonController.show')
+  .middleware('auth')
+
 
 //Route for update people
 Route
@@ -64,18 +89,65 @@ Route
   .except('store')
 
 //Route for Photos
+//Route
+  //.resource('photos', 'PhotoController')
+ // .apiOnly()
+  //.middleware('auth')
+ // .except('create', 'edit')
+
+ //Route for Create Photo
+ Route
+ .post('photos', 'PhotoController.store')
+ .middleware('auth')
+
+//Route for photo all
 Route
-  .resource('photos', 'PhotoController')
-  .apiOnly()
-  .middleware('auth')
-  .except('create', 'edit')
+.get('photos', 'PhotoController.index')
+.middleware('auth')
+
+//Route for Update
+Route
+.put('photos', 'PhotoController.update')
+.middleware('auth')
+
+  //Route for Delete
+  Route
+.delete('photos', 'PhotoController.destroy')
+.middleware('auth')
+
+//Route for Address
+//Route for Address create
+Route
+.post('address', 'AddressController.store')
+.middleware('auth')
+
+//Route for Adress all
+Route
+.get('addresses', 'AddressController.index')
+.middleware('auth')
 
 //Route for Address
 Route
-  .resource('address', 'AddressController')
-  .apiOnly()
-  .middleware('auth')
-  .except('edit')
+.get('address', 'AddressController.show')
+.middleware('auth')
+
+//Route for Address update
+Route
+.put('address', 'AddressController.update')
+.middleware('auth')
+
+//Route for Address delete
+Route
+.delete('address', 'AddressController.destroy')
+.middleware('auth')
+
+//Route
+ // .resource('address', 'AddressController')
+ // .apiOnly()
+ // .middleware('auth')
+ // .except('edit')
+
+ 
 
 //Route for Relationship
 Route

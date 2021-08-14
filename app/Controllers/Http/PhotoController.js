@@ -6,6 +6,7 @@
 
 const Photo = use('App/Models/Photo')
 const Person = use('App/Models/Person')
+const Message = require('../../Hooks/Message')
 
 /**
  * Resourceful controller for interacting with photos
@@ -106,9 +107,21 @@ class PhotoController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update({ params, request, response }) {
+  async update({ request, response }) {
 
-    const photo = await Photo.find(params.id)
+    const data = request.body
+    const photo = await Photo.find(data.id)
+
+    if (!photo) {
+      return Message.messageNotFound('Not found photo')
+    }
+
+    photo.merge(data)
+    await photo.save()
+
+    return Message.messageOk('Update photo sucess')
+
+    /*const photo = await Photo.find(params.id)
 
     const photo_ = request.only(['photo_base64'])
 
@@ -117,6 +130,7 @@ class PhotoController {
     await photo.save()
 
     return photo
+    */
   }
 
   /**
@@ -127,13 +141,35 @@ class PhotoController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy({ params, request, response }) {
-    const photo = await Photo.find(params.id)
+  async destroy({ request, response }) {
+
+    const photo = await Photo.findBy('id', request._body.id)
+
+    if (!photo) {
+      return Message.messageNotFound(`Not found photo`)
+    }
+
+    await photo.delete()
+
+    return Message.messageOk('Delete photo sucess')
+
+    //const photoId = request.body.id
+
+    //const photo = await Photo.findBy(photoId)
+
+    // if (!photo) {
+    //  return Message.messageNotFound('Not found photo')
+    //}
+    //await photo.delete()
+
+    //return Message.messageOk('Deleted sucess')
+
+    /* const photo = await Photo.find(params.id)
 
     await photo.delete()
 
     return Message.messageOk('Photo was delete')
+  }*/
   }
 }
-
 module.exports = PhotoController
