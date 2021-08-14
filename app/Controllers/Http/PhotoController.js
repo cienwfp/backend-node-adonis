@@ -21,9 +21,31 @@ class PhotoController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index() {
-    const photos = await Photo.all()
-    return photos
+  async index({ request }) {
+
+    if (!request.body.id) {
+      
+      const photos = await Photo.all()
+      return photos
+
+    }
+
+    if (request.body.id) {
+
+      const photo = await Photo
+      .query()
+      .where("id", request.body.id)
+      .with('people')
+      .fetch()
+    
+      if (photo.rows.length === 0) {
+        return Message.messageNotFound(`Not found photo for id ${request.body.id}`)
+      }
+
+      return photo
+
+    }
+    
   }
 
   /**
@@ -80,9 +102,16 @@ class PhotoController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show({ params, request, response, view }) {
+  async show({ request }) {
 
-    const photo = await Photo.find(params.id)
+
+    const photo = await Photo
+      .query()
+      .where("id", request.body.id)
+      .with('people')
+      .fetch()
+      
+
 
     return photo
   }

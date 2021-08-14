@@ -9,23 +9,13 @@ const User = use("App/Models/User")
 class UserController {
 
   async index() {
-<<<<<<< HEAD
     const user = await User
       .query()
-      .select('username')
-      .with('profile')
+      .with('profile') 
       .fetch()
+
+      delete user.password
     return user
-=======
-
-    const users = await User
-      .query().with('profile').fetch()
-    return (users)
-
-    // const usersProfiles = await User.query().with('profile').fetch()
-
-    //return (usersProfiles)
->>>>>>> 054bc3b117d377351ec60c8ebdbec224d6183f01
   }
 
   async store({ request }) {
@@ -35,7 +25,6 @@ class UserController {
      * POST user/:user_id
      */
 
-<<<<<<< HEAD
     const personId = params.personId
  
     const data = request.only(["username", "email", "password"])
@@ -47,29 +36,6 @@ class UserController {
     }
 
     const people = await Person.find(personId)
-=======
-
-
-    const data = request.only(["personId", "username", "email", "password"])
-
-    /* if (!data.personId || data.personId === null) {
-       return Message.messageNotAcceptable("Wasn't sending personId")
-     }
- 
-     if (!data.username || data.username === null) {
-       return Message.messageNotAcceptable("Wasn't sending username")
-     }
- 
-     if (!data.email || data.email === null) {
-       return Message.messageNotAcceptable("Wasn't sending email")
-     }
- 
-     if (!data.password || data.password === null) {
-       return Message.messageNotAcceptable("Wasn't sending password")
-     }*/
-
-    const people = await Person.findBy(data.personId)
->>>>>>> 054bc3b117d377351ec60c8ebdbec224d6183f01
 
     if (!people) {
       return Message.messageNotFound('Not Found people')

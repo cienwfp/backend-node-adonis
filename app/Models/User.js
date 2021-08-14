@@ -20,6 +20,10 @@ class User extends Model {
       }
     })
   }
+
+  static get visible() {
+    return ['username', 'email']
+  }
   
   tokens () {
     return this.hasMany('App/Models/Token')
