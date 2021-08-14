@@ -18,7 +18,7 @@ class Photo extends Model {
   }
 
   people () {
-    return this.belongsTo('App/Models/Person')
+    return this.hasOne('App/Models/Person', 'personId', 'id')
   }
 }
 

@@ -100,9 +100,14 @@ Route
  .post('photos', 'PhotoController.store')
  .middleware('auth')
 
-//Route for photo all
+//Route for all photo 
 Route
 .get('photos', 'PhotoController.index')
+.middleware('auth')
+
+//Route for single photo 
+Route
+.get('photo', 'PhotoController.show')
 .middleware('auth')
 
 //Route for Update

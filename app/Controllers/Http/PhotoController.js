@@ -22,8 +22,30 @@ class PhotoController {
    * @param {View} ctx.view
    */
   async index() {
-    const photos = await Photo.all()
-    return photos
+   
+    const onlyPhotos = request.body.onlyPhotos
+
+    if (typeof (onlyPhotos) !== "boolean") {
+      return Message.messageNotAcceptable('The onlyPhoto variable have to have boolean')
+    } 
+
+    if (onlyPhotos === false) {
+      const people = await Person
+      .query()
+      .with('users.profile')
+      .with('photos')
+      .with('adress')
+      .with('veicles')
+      .with('armas')
+      .fetch()
+
+      return people
+
+    } else {
+
+      const people = await Person.query().hasPhotos().with('photos').fetch()
+      return people
+    }
   }
 
   /**
@@ -80,12 +102,42 @@ class PhotoController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show({ params, request, response, view }) {
+  async show({ request }) {
+  /*
+    if (request._body.id) {
+      const photo = await Photo
+      .query()
+      .where('id', request._body.id)
+      .with('people')
+      .fetch()
 
-    const photo = await Photo.find(params.id)
+      if (photo.rows.length === 0) {
+        return Message.messageNotFound(`Not found photo`)
+      } else {
+        return photo
+      }
+    }
+  } 
 
-    return photo
+
+
+  
+  if (request._body.id) {
+    const photo = await Photo
+      .query()
+      .where('id', request._body.id)
+      .with('people')
+      .fetch()
+
+    if (photo.id) {
+      return Message.messageNotFound(`Not found photo`)
+    } else {
+
+      return photo
+    }*/
   }
+  
+
 
   /**
    * Render a form to update an existing photo.
@@ -122,13 +174,13 @@ class PhotoController {
     return Message.messageOk('Update photo sucess')
 
     /*const photo = await Photo.find(params.id)
-
+  
     const photo_ = request.only(['photo_base64'])
-
+  
     photo.merge(photo_)
-
+  
     await photo.save()
-
+  
     return photo
     */
   }
@@ -165,9 +217,9 @@ class PhotoController {
     //return Message.messageOk('Deleted sucess')
 
     /* const photo = await Photo.find(params.id)
-
+  
     await photo.delete()
-
+  
     return Message.messageOk('Photo was delete')
   }*/
   }
