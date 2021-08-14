@@ -109,7 +109,7 @@ class PersonController {
         return people
       }
     }
-
+  }
     /*const people = await Person
     .query()
     .where({'id':params.id})
@@ -121,7 +121,7 @@ class PersonController {
     .fetch()
 
   return people*/
-  }
+ 
 
   /**
    * Update person details.
