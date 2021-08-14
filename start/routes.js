@@ -89,11 +89,31 @@ Route
   .except('store')
 
 //Route for Photos
+//Route
+  //.resource('photos', 'PhotoController')
+ // .apiOnly()
+  //.middleware('auth')
+ // .except('create', 'edit')
+
+ //Route for Create Photo
+ Route
+ .post('photos', 'PhotoController.store')
+ .middleware('auth')
+
+//Route for photo all
 Route
-  .resource('photos', 'PhotoController')
-  .apiOnly()
-  .middleware('auth')
-  .except('create', 'edit')
+.get('photos', 'PhotoController.index')
+.middleware('auth')
+
+//Route for Update
+Route
+.put('photos', 'PhotoController.update')
+.middleware('auth')
+
+  //Route for Delete
+  Route
+.delete('photos', 'PhotoController.destroy')
+.middleware('auth')
 
 //Route for Address
 //Route for Address create
