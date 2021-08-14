@@ -1,6 +1,7 @@
 "use strict"
 
 const Message = require("../../Hooks/Message")
+const { validateRegisterUser } = require('../../../util/validators')
 
 const Person = use("App/Models/Person")
 const User = use("App/Models/User")
@@ -8,7 +9,11 @@ const User = use("App/Models/User")
 class UserController {
 
   async index() {
-    const user = await User.query().with('profile').fetch()
+    const user = await User
+      .query()
+      .select('username')
+      .with('profile')
+      .fetch()
     return user
   }
 
@@ -20,8 +25,15 @@ class UserController {
      */
 
     const personId = params.personId
-    console.log(personId)
+ 
     const data = request.only(["username", "email", "password"])
+
+    const { errors, valid } = validateRegisterUser(personId, data.username, data.email, data.password)   
+    
+    if (!valid) {
+      return Message.messageNotAcceptable(errors)
+    }
+
     const people = await Person.find(personId)
 
     if (!people) {
