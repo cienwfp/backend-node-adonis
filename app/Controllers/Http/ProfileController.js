@@ -27,15 +27,17 @@ class ProfileController {
     return (profilesUsers)
   }
 
-  async store({ params, request, response }) {
+  async store({ request }) {
 
     /**
    * Create/save a new profile.
    */
 
+    const userId = request.body.userId
+
     const dados = request.only(['profile', 'unidade', 'carteira', 'rules', 'restritivo', 'posicional'])
 
-    const user = await User.find(params.user_id)
+    const user = await User.find(userId)
 
     const profile = await Profile.findOrCreate(dados)
 

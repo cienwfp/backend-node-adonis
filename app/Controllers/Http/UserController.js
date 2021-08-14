@@ -1,6 +1,7 @@
 "use strict"
 
 const Message = require("../../Hooks/Message")
+const { validateRegisterUser } = require('../../../util/validators')
 
 const Person = use("App/Models/Person")
 const User = use("App/Models/User")
@@ -8,14 +9,13 @@ const User = use("App/Models/User")
 class UserController {
 
   async index() {
+    const user = await User
+      .query()
+      .with('profile') 
+      .fetch()
 
-    const users = await User
-      .query().with('profile').fetch()
-    return (users)
-
-    // const usersProfiles = await User.query().with('profile').fetch()
-
-    //return (usersProfiles)
+      delete user.password
+    return user
   }
 
   async store({ request }) {
@@ -25,27 +25,17 @@ class UserController {
      * POST user/:user_id
      */
 
-
-
-    const data = request.only(["personId", "username", "email", "password"])
-
-    /* if (!data.personId || data.personId === null) {
-       return Message.messageNotAcceptable("Wasn't sending personId")
-     }
+    const personId = params.personId
  
-     if (!data.username || data.username === null) {
-       return Message.messageNotAcceptable("Wasn't sending username")
-     }
- 
-     if (!data.email || data.email === null) {
-       return Message.messageNotAcceptable("Wasn't sending email")
-     }
- 
-     if (!data.password || data.password === null) {
-       return Message.messageNotAcceptable("Wasn't sending password")
-     }*/
+    const data = request.only(["username", "email", "password"])
 
-    const people = await Person.findBy(data.personId)
+    const { errors, valid } = validateRegisterUser(personId, data.username, data.email, data.password)   
+    
+    if (!valid) {
+      return Message.messageNotAcceptable(errors)
+    }
+
+    const people = await Person.find(personId)
 
     if (!people) {
       return Message.messageNotFound('Not Found people')

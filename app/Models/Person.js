@@ -20,9 +20,17 @@ class Person extends Model {
     return false;
   }
 
+  static scopeHasPhotos (query) {
+    return query.has('photos')
+  }
+
   users() {
     return this.hasMany('App/Models/User', 'id', 'personId')
    }
+
+  photo() {
+    return this.hasOne('App/Models/Photo')
+  }
 
   photos() {
     return this.hasMany('App/Models/Photo', 'id', 'personId')

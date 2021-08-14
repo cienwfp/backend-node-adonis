@@ -17,19 +17,32 @@ class PersonController {
    * Show a list of all people.
    * GET people
    */
-  async index({ request, response, view }) {
+  async index({ request }) {
 
-    const people = await Person
-    //const people = await Person
-      .query()
-      .with('users.profile')
-      .with('photos')
-      .with('address')
-      .with('vehicles')
-      .with('armas')
-      .fetch()
+    const onlyPhotos = request.body.onlyPhotos
 
-    return people
+    if (typeof (onlyPhotos) !== "boolean") {
+      return Message.messageNotAcceptable('The onlyPhoto variable have to have boolean')
+    }
+
+    if (onlyPhotos === false) {
+      const people = await Person
+        .query()
+        .with('users.profile')
+        .with('photos')
+        .with('address')
+        .with('vehicles')
+        .with('armas')
+        .fetch()
+
+      return people
+    
+    } else {
+
+      const people = await Person.query().hasPhotos().with('photos').fetch()
+      return people
+    
+    }
   }
 
   /**
@@ -110,18 +123,18 @@ class PersonController {
       }
     }
   }
-    /*const people = await Person
-    .query()
-    .where({'id':params.id})
-    .with('users.profile')
-    .with('photos')
-    .with('address')
-    .with('vehicles')
-    .with('armas')
-    .fetch()
+  /*const people = await Person
+  .query()
+  .where({'id':params.id})
+  .with('users.profile')
+  .with('photos')
+  .with('address')
+  .with('vehicles')
+  .with('armas')
+  .fetch()
 
-  return people*/
- 
+return people*/
+
 
   /**
    * Update person details.
@@ -131,7 +144,7 @@ class PersonController {
 
     const data = request.body
     const people = await Person.find(data.id)
-    
+
     if (!people) {
       return Message.messageNotFound('Not found people')
     }
@@ -162,7 +175,7 @@ class PersonController {
 
     return Message.messageOk('Deleted sucess')
 
-    
+
 
   }
 }
