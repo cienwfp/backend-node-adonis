@@ -13,19 +13,45 @@ const Message = require('../../Hooks/Message')
  */
 class ProfileController {
 
-  async index() {
+  async index({ request }) {
+const id = request.body.id
+    if (request.body.id) {
+      const profile = await Profile
+        .query()
+        .where('id', id)
+        .with('users.profile')
+        .fetch()
 
-    /**
-     * Show a list of all profiles.
-     * GET profile
-     */
+      if (profile.rows.length === 0) {
+        return Message.messageNotFound(`Not found id Profile`)
 
-    // const profiles = await Profile.all()
+      } else {
 
-    const profilesUsers = await Profile.query().with('users').fetch()
+        return profile
+      }
+    }
+      if (!request._body.id) {
+        const profile = await Profile
+          .query()
+          .where('id', request._body.id)
+          .with('user')
+          .fetch()
 
-    return (profilesUsers)
-  }
+        const profiles = await Profile.all()
+        return profiles
+      }
+    }
+
+  /*  
+    const profile = await Profile
+      .query()
+      .with('users')
+      .fetch()
+
+    return (profile)
+*/
+
+
 
   async store({ request }) {
 
@@ -45,45 +71,38 @@ class ProfileController {
 
     profile.user = await profile.users().fetch()
 
-    return user
-    //return profile
+    return profile
 
-  }
-
-  async show({ params, request, response, view }) {
-    /**
-   * Display a single profile.
-   * GET profiles/:id
-   */
-
-    let user
-
-    const profiles = await Profile.find(params.id)
-
-    try {
-      return await profiles.users().fetch()
-    }
-    catch {
-      return user = []
-    }
   }
 
   /**
-   * Update profile details.
-   * PUT or PATCH profiles/:id
-   */
-  async update({ params, request }) {
+ * Update profile details.
+ * PUT or PATCH profiles/:id
+ */
+  async update({ request }) {
+    /*
+        const data = request.only([
+          'profile', 'unidade', 'carteira', 'rules', 'restritivo', 'posicional'
+        ])
+        console.log(data)
+        const profile = await Profile.find(params.id)
+    
+        profile.merge(data)
+        await profile.save()
+    
+        return profile */
+    const data = request.body
+    const profile = await Profile.find(data.id)
 
-    const data = request.only([
-      'profile', 'unidade', 'carteira', 'rules', 'restritivo', 'posicional'
-    ])
-    console.log(data)
-    const profile = await Profile.find(params.id)
+    if (!profile) {
+      return Message.messageNotFound('Not found profile')
+    }
 
     profile.merge(data)
     await profile.save()
 
-    return profile
+    return Message.messageOk('Update profile sucess')
+
 
   }
 
@@ -91,18 +110,31 @@ class ProfileController {
    * Delete a profile with id.
    * DELETE profiles/:id
    */
-  async destroy({ params, response }) {
+  async destroy({ request }) {
 
-    const profile = await Profile.find(params.id)
+    const data = request.body
+    const profile = await Profile.find(data.id)
 
     if (profile) {
+
       await profile.delete()
       return Message.messageOk('deleted')
 
     } else {
-      return Message.messageNotFound(`Not Found profile ${params.id}`)
+      return Message.messageNotFound('Not Found profile')
     }
 
+    /*
+      const profile = await Profile.find(params.id)
+  
+      if (profile) {
+        await profile.delete()
+        return Message.messageOk('deleted')
+  
+      } else {
+        return Message.messageNotFound(`Not Found profile ${params.id}`)
+      }
+  */
 
 
   }

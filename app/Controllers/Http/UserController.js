@@ -8,15 +8,60 @@ const User = use("App/Models/User")
 
 class UserController {
 
-  async index() {
-    const user = await User
-      .query()
-      .with('profile') 
-      .fetch()
+  async index({ request }) {
 
-      delete user.password
-    return user
+    if (!request._body.id) {
+      const users = await User
+        .query()
+        .with('profile')
+        .fetch()
+      
+      return users
+    }
+
+    if (request._body.id) {
+      const user = await User
+        .query()
+        .where('id', request._body.id)
+        .with('profile')
+        .fetch()
+
+      if (user.rows.length === 0) {
+        return Message.messageNotFound(`Not found id User`)
+      } else {
+
+        return user
+      }
+
+    }
+
+
+    /*
+     if (!request._body.id) {
+       const user = await User
+         .query()
+         .where('id', request._body.id)
+         .fetch()
+ 
+       delete user.password
+ 
+       const users = await User.all()
+       return users
+     }
+     if (request._body.id) {
+       const user = await User
+         .query()
+         .where('id', request._body.id)
+         .fetch()
+ 
+       return user
+       
+     } else {
+       return Message.messageNotFound('Not found id User')
+     }
+     */
   }
+
 
   async store({ request }) {
 
@@ -25,17 +70,15 @@ class UserController {
      * POST user/:user_id
      */
 
-    const personId = params.personId
- 
-    const data = request.only(["username", "email", "password"])
+    const data = request.only(["personId", "username", "email", "password"])
 
-    const { errors, valid } = validateRegisterUser(personId, data.username, data.email, data.password)   
-    
+    const { errors, valid } = validateRegisterUser(data.personId, data.username, data.email, data.password)
+
     if (!valid) {
       return Message.messageNotAcceptable(errors)
     }
 
-    const people = await Person.find(personId)
+    const people = await Person.find(data.personId)
 
     if (!people) {
       return Message.messageNotFound('Not Found people')
@@ -86,9 +129,9 @@ class UserController {
 
   async update({ request }) {
 
-    const data = request.body.id
+    const data = request.body
     const user = await User.find(data.id)
-    
+
     if (!user) {
       return Message.messageNotFound('Not found user')
     }

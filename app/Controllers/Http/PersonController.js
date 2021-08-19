@@ -20,9 +20,28 @@ class PersonController {
   async index({ request }) {
 
     const onlyPhotos = request.body.onlyPhotos
+    const id = request.body.personId
+
+    if (id) {
+      const people = await Person
+        .query()
+        .where('id', id)
+        .with('users.profile')
+        .with('photos')
+        .with('address')
+        .with('vehicles')
+        .with('armas')
+        .fetch()
+
+      if (people.rows.length === 0) {
+        return Message.messageNotFound(`Not found people`)
+      } else {
+        return people
+      }
+    }
 
     if (typeof (onlyPhotos) !== "boolean") {
-      return Message.messageNotAcceptable('The onlyPhoto variable have to have boolean')
+      return Message.messageNotAcceptable('The onlyPhotos variable have to have boolean')
     }
 
     if (onlyPhotos === false) {
@@ -36,12 +55,12 @@ class PersonController {
         .fetch()
 
       return people
-    
+
     } else {
 
       const people = await Person.query().hasPhotos().with('photos').fetch()
       return people
-    
+
     }
   }
 
@@ -132,8 +151,8 @@ class PersonController {
   .with('vehicles')
   .with('armas')
   .fetch()
-
-return people*/
+  
+  return people*/
 
 
   /**

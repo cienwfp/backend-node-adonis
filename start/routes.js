@@ -29,23 +29,23 @@ Route
 
 Route
   .post('/user', 'UserController.store')
-  .middleware('auth')
+.middleware('auth')
 
 Route
   .get('/users', 'UserController.index')
-  .middleware('auth')
+ .middleware('auth')
 
 Route
   .get('/user', 'UserController.show')
-  .middleware('auth')
+ .middleware('auth')
 
-  Route
+Route
   .put('/user', 'UserController.update')
-  .middleware('auth')
+.middleware('auth')
 
-  Route
+Route
   .delete('/user', 'UserController.destroy')
-  .middleware('auth')
+.middleware('auth')
 
 //Route for people all
 //Route
@@ -56,109 +56,125 @@ Route
 
 Route
   .post('/people', 'PersonController.store')
-  .middleware('auth')
+.middleware('auth')
 
-  Route
+Route
   .get('/people', 'PersonController.index')
-  .middleware('auth')
+ .middleware('auth')
 
 Route
   .get('/person', 'PersonController.show')
-  .middleware('auth')
+.middleware('auth')
 
 
 //Route for update people
 Route
   .put('/people', 'PersonController.update')
-  .middleware('auth')
+.middleware('auth')
 
 Route
   .delete('/people', 'PersonController.destroy')
-  .middleware('auth')
+ .middleware('auth')
 
 
 //Route for profile
 Route
-  .post('/profile/:user_id', 'ProfileController.store')
+  .post('/profile', 'ProfileController.store')
   .middleware('auth')
 
 Route
-  .resource('profile', 'ProfileController')
-  .apiOnly()
+  .get('/profile', 'ProfileController.index')
   .middleware('auth')
-  .except('store')
+
+Route
+  .put('/profile', 'ProfileController.update')
+  .middleware('auth')
+Route
+  .delete('/profile', 'ProfileController.destroy')
+  .middleware('auth')
+
+Route
+//.resource('profile', 'ProfileController')
+// .apiOnly()
+// .middleware('auth')
+// .except('store')
 
 //Route for Photos
 //Route
-  //.resource('photos', 'PhotoController')
- // .apiOnly()
-  //.middleware('auth')
- // .except('create', 'edit')
+//.resource('photos', 'PhotoController')
+// .apiOnly()
+//.middleware('auth')
+// .except('create', 'edit')
 
- //Route for Create Photo
- Route
- .post('photos', 'PhotoController.store')
- .middleware('auth')
-
-//Route for photo all
+//Route for Create Photo
 Route
-.get('photos', 'PhotoController.index')
-.middleware('auth')
+  .post('photos', 'PhotoController.store')
+  .middleware('auth')
+
+//Route for all photo 
+Route
+  .get('photos', 'PhotoController.index')
+  .middleware('auth')
+
+//Route for single photo 
+Route
+  .get('photo', 'PhotoController.show')
+  .middleware('auth')
 
 //Route for Update
 Route
-.put('photos', 'PhotoController.update')
-.middleware('auth')
+  .put('photos', 'PhotoController.update')
+  .middleware('auth')
 
-  //Route for Delete
-  Route
-.delete('photos', 'PhotoController.destroy')
-.middleware('auth')
+//Route for Delete
+Route
+  .delete('photos', 'PhotoController.destroy')
+  .middleware('auth')
 
 //Route for Address
 //Route for Address create
 Route
-.post('address', 'AddressController.store')
-.middleware('auth')
+  .post('address', 'AddressController.store')
+  .middleware('auth')
 
 //Route for Adress all
 Route
-.get('addresses', 'AddressController.index')
-.middleware('auth')
+  .get('addresses', 'AddressController.index')
+  .middleware('auth')
 
 //Route for Address
 Route
-.get('address', 'AddressController.show')
-.middleware('auth')
+  .get('address', 'AddressController.show')
+  .middleware('auth')
 
 //Route for Address update
 Route
-.put('address', 'AddressController.update')
-.middleware('auth')
+  .put('address', 'AddressController.update')
+  .middleware('auth')
 
 //Route for Address delete
 Route
-.delete('address', 'AddressController.destroy')
-.middleware('auth')
+  .delete('address', 'AddressController.destroy')
+  .middleware('auth')
 
 //Route
- // .resource('address', 'AddressController')
- // .apiOnly()
- // .middleware('auth')
- // .except('edit')
+// .resource('address', 'AddressController')
+// .apiOnly()
+// .middleware('auth')
+// .except('edit')
 
- 
+
 
 //Route for Relationship
 Route
   .resource('relationship', 'RelationshipPeopleToPersonController')
   .apiOnly()
-  .middleware('auth')
+  //.middleware('auth')
   .except(['show', 'edit', 'create', 'destroy'])
 
 Route
   .delete('/relationship', 'RelationshipPeopleToPersonController.destroy')
-  .middleware('auth')
+  //.middleware('auth')
 
 // Route for vehicle
 Route

@@ -9,7 +9,7 @@ const Hash = use('Hash')
 class User extends Model {
   static boot() {
     super.boot()
-
+    this.addHook("beforeCreate", "GenerateIdHook.uuid");
     /**
      * A hook to hash the user password before saving
      * it to the database.
@@ -22,7 +22,7 @@ class User extends Model {
   }
 
   static get visible() {
-    return ['username', 'email']
+    return ['username', 'email', 'id']
   }
   
   tokens () {

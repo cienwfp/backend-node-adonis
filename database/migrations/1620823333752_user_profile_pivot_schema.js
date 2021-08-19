@@ -8,7 +8,7 @@ class UserProfilePivotSchema extends Schema {
     this.create('user_profile_pivots', (table) => {
       table.increments()
       table
-        .integer('user_id')
+        .uuid('user_id')
         .unsigned()
         .references('users.id')
         .onDelete('CASCADE')
