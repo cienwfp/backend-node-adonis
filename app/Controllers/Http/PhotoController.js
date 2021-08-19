@@ -21,23 +21,23 @@ class PhotoController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index() {
-   
+  async index({ request }) {
+
     const onlyPhotos = request.body.onlyPhotos
 
     if (typeof (onlyPhotos) !== "boolean") {
-      return Message.messageNotAcceptable('The onlyPhoto variable have to have boolean')
-    } 
+      return Message.messageNotAcceptable('The onlyPhotos variable have to have boolean')
+    }
 
     if (onlyPhotos === false) {
       const people = await Person
-      .query()
-      .with('users.profile')
-      .with('photos')
-      .with('adress')
-      .with('veicles')
-      .with('armas')
-      .fetch()
+        .query()
+        .with('users.profile')
+        .with('photos')
+        .with('address')
+        .with('vehicles')
+        .with('armas')
+        .fetch()
 
       return people
 
@@ -45,8 +45,13 @@ class PhotoController {
 
       const people = await Person.query().hasPhotos().with('photos').fetch()
       return people
+
     }
+
+
   }
+
+
 
   /**
    * Render a form to be used for creating a new photo.
@@ -103,40 +108,40 @@ class PhotoController {
    * @param {View} ctx.view
    */
   async show({ request }) {
-  /*
+    /*
+      if (request._body.id) {
+        const photo = await Photo
+        .query()
+        .where('id', request._body.id)
+        .with('people')
+        .fetch()
+  
+        if (photo.rows.length === 0) {
+          return Message.messageNotFound(`Not found photo`)
+        } else {
+          return photo
+        }
+      }
+    } 
+  
+  
+  
+    
     if (request._body.id) {
       const photo = await Photo
-      .query()
-      .where('id', request._body.id)
-      .with('people')
-      .fetch()
-
-      if (photo.rows.length === 0) {
+        .query()
+        .where('id', request._body.id)
+        .with('people')
+        .fetch()
+  
+      if (photo.id) {
         return Message.messageNotFound(`Not found photo`)
       } else {
+  
         return photo
-      }
-    }
-  } 
-
-
-
-  
-  if (request._body.id) {
-    const photo = await Photo
-      .query()
-      .where('id', request._body.id)
-      .with('people')
-      .fetch()
-
-    if (photo.id) {
-      return Message.messageNotFound(`Not found photo`)
-    } else {
-
-      return photo
-    }*/
+      }*/
   }
-  
+
 
 
   /**

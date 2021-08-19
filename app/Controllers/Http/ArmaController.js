@@ -19,13 +19,13 @@ class ArmaController {
   async index({ request }) {
 
     if ((!request._body.numero_serie ||
-      request._body.numero_serie === null) && 
+      request._body.numero_serie === null) &&
       !request._body.tipo_arma) {
 
       const armas = await Arma.all()
       return (armas)
 
-    } 
+    }
     if (request._body.numero_serie) {
 
       const arma = await Arma.findBy('numero_serie', request._body.numero_serie)
@@ -42,12 +42,12 @@ class ArmaController {
         }
 
       } else {
-        return Message.messageNotFound(`Not found weapon with numero serie ${request._body.numero_serie}`)
+        return Message.messageNotFound('Not found weapon with serial number')
       }
     }
 
     if (request._body.tipo_arma) {
-      const armas = await Arma  
+      const armas = await Arma
         .query()
         .where('tipo_arma', request._body.tipo_arma)
         .fetch()
@@ -111,7 +111,10 @@ class ArmaController {
         return Message.messageNotFound('Not found personId')
       }
 
-      data.usuario_ultima_atualizacao = auth.user.username
+      //data.usuario_ultima_atualizacao = auth.user.username
+      //if (!data.usuario_ultima_atualizacao || data.usuario_ultima_atualizacao == null) {
+      //return Message.messageUnauthorized('Unauthorized')
+      //}
 
       const arma__ = await Arma.create(data)
 
@@ -135,15 +138,27 @@ class ArmaController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update({request, auth}) {
+  async update({ request, auth }) {
 
     const data = request.body
 
     if (!data.id) {
-      return messageNotAcceptable('send id of the weapon')
+
+      return Message.messageNotAcceptable('Send id of the weapon')
+    }
+
+    if (data.personId) {
+      const people = await Person.find(data.personId)
+      if (!people) {
+        return Message.messageNotFound('Not found person')
+      }
     }
 
     const arma = await Arma.find(data.id)
+
+    if (!arma) {
+      return Message.messageNotFound('Not found weapon')
+    }
 
     data.usuario_ultima_atualizacao = auth.user.username
 
@@ -162,7 +177,7 @@ class ArmaController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy({request}) {
+  async destroy({ request }) {
 
     const armaId = request.body.id
 

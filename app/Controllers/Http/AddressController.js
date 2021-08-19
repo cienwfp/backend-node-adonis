@@ -24,8 +24,23 @@ class AddressController {
    * @param {View} ctx.view
    */
   async index({ request, response, view }) {
-    const addresses = await Address.all()
-    return addresses
+
+    if (request._body.id) {
+      const address = await Address
+        .query()
+        .where('id', request._body.id)
+        .with('people')
+        .fetch()
+
+      if (address.rows.length === 0) {
+        return Message.messageNotFound(`Not found address`)
+      } else {
+
+        return address
+      }
+    }
+    const address = await Address.all()
+    return address
   }
 
   /**
@@ -97,13 +112,13 @@ class AddressController {
    * @param {View} ctx.view
    */
   async show({ request, response, view }) {
-   // const address = await Address.find(params.id)
+    // const address = await Address.find(params.id)
     //return address
-    if (request._body.id) {
+    /*if (request._body.id) {
       const address = await Address
         .query()
         .where('id', request._body.id)
-        .with('people')          
+        .with('people')
         .fetch()
 
       if (address.rows.length === 0) {
@@ -112,7 +127,7 @@ class AddressController {
 
         return address
       }
-    }
+    }*/
   }
 
   /**
@@ -124,8 +139,8 @@ class AddressController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
- // async edit({ params, request, response, view }) {
- // }
+  // async edit({ params, request, response, view }) {
+  // }
 
   /**
    * Update address details.
@@ -153,7 +168,7 @@ class AddressController {
     */
     const data = request.body
     const address = await Address.find(data.id)
-    
+
     if (!address) {
       return Message.messageNotFound('Not found address')
     }
@@ -172,18 +187,18 @@ class AddressController {
    * @param {Response} ctx.response
    */
   async destroy({ request, response }) {
-   /*
-    const address = await Address.find(params.id)
-
-    if (!address) {
-      return Message.messageNotFound('Address not found')
-
-    }
-
-    await address.delete()
-
-    return Message.messageOk('Deleted success')
-    */
+    /*
+     const address = await Address.find(params.id)
+ 
+     if (!address) {
+       return Message.messageNotFound('Address not found')
+ 
+     }
+ 
+     await address.delete()
+ 
+     return Message.messageOk('Deleted success')
+     */
     const addressId = request.body.id
 
     const address = await Address.find(addressId)
