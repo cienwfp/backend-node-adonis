@@ -12,7 +12,7 @@ class AddColumnsProfileSchema extends Schema {
 
   down () {
     this.table('profiles', (table) => {
-      table.string('obs')
+      table.dropColumn('obs')
     })
   }
 }

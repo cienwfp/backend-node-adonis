@@ -1,185 +1,165 @@
 "use strict"
 
 const Message = require("../../Hooks/Message")
-const { validateRegisterUser } = require('../../../util/validators')
+const Rules = require("../../Hooks/authRoute")
+const { validateRegisterUser, validateUpdateUserInput } = require('../../../util/validators')
+const { get } = require("@adonisjs/lucid/src/Factory")
+const Regex = require("../../../util/regex")
+const Env = use('Env')
 
 const Person = use("App/Models/Person")
 const User = use("App/Models/User")
-
 class UserController {
 
-  async index({ request }) {
+  async index({ request, auth }) {
 
-    if (!request._body.id) {
-      const users = await User
-        .query()
-        .with('profile')
-        .fetch()
-      
-      return users
-    }
+    const userAuth = auth.user.$originalAttributes //id, username, email, password, enabled, personId)
 
-    if (request._body.id) {
-      const user = await User
-        .query()
-        .where('id', request._body.id)
-        .with('profile')
-        .fetch()
+    const check = await Rules.rulesUser(userAuth)
 
-      if (user.rows.length === 0) {
-        return Message.messageNotFound(`Not found id User`)
-      } else {
+    const dataa = request.only(['restritivo', 'posicional'])
 
-        return user
+    const checkPosRest = await Regex.ResPost(dataa)
+
+    console.log(checkPosRest)
+
+    
+    
+    if (check.read || userAuth.username === Env.get("USER_MASTER")) {
+
+      if (!request._body.id) {
+        const users = await User
+          .query()
+          .with('profile')
+          .fetch()
+
+        return users
       }
 
+      if (request._body.id) {
+        const user = await User
+          .query()
+          .where('id', request._body.id)
+          .with('profile')
+          .fetch()
+
+        if (user.rows.length === 0) {
+          return Message.messageNotFound(`Not found id User`)
+        } else {
+
+          return user
+        }
+
+      }
+    } else {
+
+      return Message.messageUnauthorized('Unauthorized')
     }
-
-
-    /*
-     if (!request._body.id) {
-       const user = await User
-         .query()
-         .where('id', request._body.id)
-         .fetch()
- 
-       delete user.password
- 
-       const users = await User.all()
-       return users
-     }
-     if (request._body.id) {
-       const user = await User
-         .query()
-         .where('id', request._body.id)
-         .fetch()
- 
-       return user
-       
-     } else {
-       return Message.messageNotFound('Not found id User')
-     }
-     */
   }
 
 
-  async store({ request }) {
+  async store({ request, auth }) {
 
     /**
      * Create user for people
      * POST user/:user_id
      */
 
-    const data = request.only(["personId", "username", "email", "password"])
+    const userAuth = auth.user.$originalAttributes //id, username, email, password, enabled, personId)
 
-    const { errors, valid } = validateRegisterUser(data.personId, data.username, data.email, data.password)
+    const check = await Rules.rulesUser(userAuth)
 
-    if (!valid) {
-      return Message.messageNotAcceptable(errors)
+    if (check.create || userAuth.username === Env.get("USER_MASTER")) {
+
+      const data = request.only(["personId", "username", "email", "password", "enabled"])
+
+      const { errors, valid } = validateRegisterUser(data.personId, data.username, data.email, data.password, data.enabled)
+
+      if (!valid) {
+        return Message.messageNotAcceptable(errors)
+      }
+
+      if (!data.personId || data.personId == null) {
+        return Message.messageNotAcceptable('Not send ID person')
+      }
+      const people = await Person.find(data.personId)
+
+      if (!people) {
+        return Message.messageNotFound('Not Found people')
+      }
+
+      const user = await User.findBy('personId', data.personId)
+
+      if (user) {
+        return Message.messageBadRequest("This people exist user")
+      }
+
+      const user_ = await User.create(data)
+
+      return user_
+
+    } else {
+
+      return Message.messageUnauthorized('Unauthorized')
     }
-
-    const people = await Person.find(data.personId)
-
-    if (!people) {
-      return Message.messageNotFound('Not Found people')
-    }
-
-    const user = await User.findBy('personId', data.personId)
-
-    if (user) {
-      return Message.messageBadRequest("This people exist user")
-    }
-
-    const user_ = await User.create(data)
-
-    return user_
   }
 
-  async show({ request }) {
+  async update({ request, auth }) {
 
-    /**
-     * Show all profile relationship whit user
-     * GET /user/:
-     */
+    const userAuth = auth.user.$originalAttributes //id, username, email, password, enabled, personId)
 
-    let Profile
-    const data = request.only(['id'])
+    const check = await Rules.rulesUser(userAuth)
 
-    if (!data.id) {
-      return Message.messageNotAcceptable('Not found user')
+    if (check.update || userAuth.username === Env.get("USER_MASTER")) {
+
+      const data = request.body
+
+      const user = await User.find(data.id)
+
+      const { errors, valid } = validateUpdateUserInput(data)
+
+      if (!valid) {
+        return Message.messageNotAcceptable(errors)
+      }
+
+      if (!user) {
+        return Message.messageNotFound('Not found user')
+      }
+      user.merge(data)
+      await user.save()
+
+      return Message.messageOk('Update user sucess')
+
+    } else {
+
+      return Message.messageUnauthorized('Unauthorized')
     }
-
-
-    /*
-    const userProfile = user.profile().fetch()
-    return userProfile
-    */
-
-    const user = await User
-      .query()
-      .where('id', data.id)
-      .with('profile')
-      .fetch()
-
-
-    return (user)
-
-
   }
 
-  async update({ request }) {
-
-    const data = request.body
-    const user = await User.find(data.id)
-
-    if (!user) {
-      return Message.messageNotFound('Not found user')
-    }
-    user.merge(data)
-    await user.save()
-
-    return Message.messageOk('Update user sucess')
-
-  }
-
-  async destroy({ request, auth, response }) {
+  async destroy({ request, auth }) {
 
     /**
      * Delete user
      * DELETE /user/:id
      */
-    var userAuth__
 
-    //const user = await User.find(params.id)
-    const data = request.body
-    const user = await User.find(data.id)
+    const userAuth = auth.user.$originalAttributes //id, username, email, password, enabled, personId)
 
-    //if (people.user_id !== auth.user.id) {
-    //  return response.status(401).send({ error: 'Not authorized' })
-    //}
+    const check = await Rules.rulesUser(userAuth)
 
-    const userAuth = await User.find(auth.user.id)
+    if (check.delete || userAuth.username === Env.get("USER_MASTER")) {
+      //const user = await User.find(params.id)
+      const data = request.body
+      const user = await User.find(data.id)
 
-    const userAuth_ = await userAuth.profile().fetch()
+      await user.delete()
 
-    console.log(userAuth)
-    console.log(userAuth_)
+      return Message.messageUnauthorized('Deleted')
+    
+    } else {
 
-    for (userAuth__ of userAuth_.rows) {
-      if (
-        (userAuth__.profile !== 'coordenador') ||
-        (userAuth__.unidade !== '1') ||
-        (userAuth__.carteira !== 'segor')) {
-
-        return Message.messageUnauthorized('Not authorized')
-      }
+      return Message.messageUnauthorized('Unauthorized')
     }
-
-
-    await user.delete()
-
-    return Message.messageUnauthorized('Deleted')
-
   }
 }
 

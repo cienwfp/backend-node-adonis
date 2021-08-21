@@ -13,8 +13,8 @@ class AddColumnsVehicleSchema extends Schema {
 
   down () {
     this.alter('vehicle', (table) => {
-      table.string('cor')
-      table.string('obs')
+      table.dropColumn('cor')
+      table.dropColumn('obs')
     })
   }
 }

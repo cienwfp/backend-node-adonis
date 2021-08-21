@@ -4,12 +4,13 @@
 const Schema = use('Schema')
 
 class UserSchema extends Schema {
-  up () {
+  async up() {
     this.create('users', (table) => {
       table.uuid('id').primary()
       table.string('username', 80).notNullable().unique()
       table.string('email', 254).notNullable().unique()
       table.string('password', 60).notNullable()
+      table.boolean('enabled').notNullable()
       table
         .uuid('people_id')
         .unsigned()
@@ -21,7 +22,7 @@ class UserSchema extends Schema {
     })
   }
 
-  down () {
+  down() {
     this.drop('users')
   }
 }

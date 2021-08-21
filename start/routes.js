@@ -16,6 +16,7 @@
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
 
+
 // Route for authentication user
 Route
   .post('/session', 'SessionController.create')

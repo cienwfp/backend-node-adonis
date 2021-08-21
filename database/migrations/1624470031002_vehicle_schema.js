@@ -17,7 +17,7 @@ class VehicleSchema extends Schema {
   }
 
   down () {
-    this.drop('vehicles')
+    this.drop('vehicle')
   }
 }
 

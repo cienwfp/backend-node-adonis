@@ -2,9 +2,10 @@
 
 /** @type {import('@adonisjs/lucid/src/Schema')} */
 const Schema = use('Schema')
+const Env = use('Env')
 
 class TokensSchema extends Schema {
-  up () {
+  async up () {
     this.create('tokens', (table) => {
       table.increments()
       table
@@ -17,6 +18,16 @@ class TokensSchema extends Schema {
       table.boolean('is_revoked').defaultTo(false)
       table.timestamps()
     })
+
+    const userAdmin = {
+      'username': Env.get('USER_MASTER'),
+      'email': Env.get('USER_MASTER'),
+      'password': Env.get('PASSWORD_MASTER'),
+      'enabled': true
+    }
+
+    await use('App/Models/User').create(userAdmin)
+
   }
 
   down () {

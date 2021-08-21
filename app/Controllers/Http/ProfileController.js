@@ -3,6 +3,7 @@
 const Profile = use('App/Models/Profile')
 const User = use('App/Models/User')
 const Message = require('../../Hooks/Message')
+const _ = require('lodash')
 
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
@@ -14,7 +15,9 @@ const Message = require('../../Hooks/Message')
 class ProfileController {
 
   async index({ request }) {
-const id = request.body.id
+
+    const id = request.body.id
+    
     if (request.body.id) {
       const profile = await Profile
         .query()
@@ -30,17 +33,17 @@ const id = request.body.id
         return profile
       }
     }
-      if (!request._body.id) {
-        const profile = await Profile
-          .query()
-          .where('id', request._body.id)
-          .with('user')
-          .fetch()
+    if (!request.body.id) {
+      const profile = await Profile
+        .query()
+        .where('id', request._body.id)
+        .with('user')
+        .fetch()
 
-        const profiles = await Profile.all()
-        return profiles
-      }
+      const profiles = await Profile.all()
+      return profiles
     }
+  }
 
   /*  
     const profile = await Profile
@@ -59,10 +62,47 @@ const id = request.body.id
    * Create/save a new profile.
    */
 
+    var dados = {}
+    
+    dados.rules = {
+      user: {
+        create: false,
+        update: false,
+        read: false,
+        delete: false
+      },
+      person: {
+        create: false,
+        update: false,
+        read: false,
+        delete: false
+      },
+      arma: {
+        create: false,
+        update: false,
+        read: false,
+        delete: false
+      },
+      vehicle: {
+        create: false,
+        update: false,
+        read: false,
+        delete: false
+      },
+      profile: {
+        create: false,
+        update: false,
+        read: false,
+        delete: false
+      }
+    }
     const userId = request.body.userId
 
-    const dados = request.only(['profile', 'unidade', 'carteira', 'rules', 'restritivo', 'posicional'])
 
+    const dadosReq = request.only(['profile', 'unidade', 'carteira', 'rules', 'restritivo', 'posicional'])
+
+    _.merge(dados, dadosReq)
+    
     const user = await User.find(userId)
 
     const profile = await Profile.findOrCreate(dados)

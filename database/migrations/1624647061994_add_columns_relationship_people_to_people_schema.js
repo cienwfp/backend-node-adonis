@@ -12,7 +12,7 @@ class AddColumnsRelationshipPeopleToPeopleSchema extends Schema {
 
   down () {
     this.table('relationship_people_to_people', (table) => {
-      table.string('obs')
+      table.dropColumn('obs')
     })
   }
 }

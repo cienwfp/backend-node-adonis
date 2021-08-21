@@ -240,4 +240,6 @@ module.exports = {
     path: '/',
     maxAge: 7200
   }
+
 }
+

@@ -17,12 +17,12 @@ class AddColumnsAddressSchema extends Schema {
 
   down () {
     this.table('addresses', (table) => {
-      table.string('complemento')
-      table.string('bairro')
-      table.integer('cidade')
-      table.integer('uf')
-      table.integer('cep')
-      table.integer('obs')
+      table.dropColumn('complemento')
+      table.dropColumn('bairro')
+      table.dropColumn('cidade')
+      table.dropColumn('uf')
+      table.dropColumn('cep')
+      table.dropColumn('obs')
     })
   }
 }

@@ -110,10 +110,10 @@ class PersonController {
         return messageNotFound('CPF is not valid')
       }
     }
-
+   
     const people = await Person.create(data)
 
-    return people
+    return Message.messageCreated('Person created sucess')
 
   }
 
@@ -122,43 +122,8 @@ class PersonController {
    * GET people/:id
    */
   async show({ request }) {
-
-    if (request._body.id) {
-      const people = await Person
-        .query()
-        .where('id', request._body.id)
-        .with('users.profile')
-        .with('photos')
-        .with('address')
-        .with('vehicles')
-        .with('armas')
-        .fetch()
-
-      if (people.rows.length === 0) {
-        return Message.messageNotFound(`Not found people`)
-      } else {
-
-        return people
-      }
-    }
   }
-  /*const people = await Person
-  .query()
-  .where({'id':params.id})
-  .with('users.profile')
-  .with('photos')
-  .with('address')
-  .with('vehicles')
-  .with('armas')
-  .fetch()
-  
-  return people*/
 
-
-  /**
-   * Update person details.
-   * PUT or PATCH people/:id
-   */
   async update({ request }) {
 
     const data = request.body

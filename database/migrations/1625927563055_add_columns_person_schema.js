@@ -13,8 +13,8 @@ class AddColumnsPersonSchema extends Schema {
 
   down () {
     this.table('people', (table) => {
-      table.string('restritivo')
-      table.string('posicional')
+      table.dropColumn('restritivo')
+      table.dropColumn('posicional')
     })
   }
 }

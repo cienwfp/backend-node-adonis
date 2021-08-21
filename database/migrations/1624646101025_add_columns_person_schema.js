@@ -12,7 +12,7 @@ class AddColumnsPersonSchema extends Schema {
 
   down () {
     this.table('people', (table) => {
-      table.string('obs')
+      table.dropColumn('obs')
     })
   }
 }
