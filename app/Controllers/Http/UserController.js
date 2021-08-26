@@ -15,19 +15,70 @@ class UserController {
 
     const userAuth = auth.user.$originalAttributes //id, username, email, password, enabled, personId)
 
-    const check = await Rules.rulesUser(userAuth)
+    //Consulta o Id de quem está logado
+    //Resgata os valores do campo restritivo e posicional do usuário logado
+    //check se os valores restritivo e posicional são válidos.
+    //check se o usuário é administrador
+    if (userAuth.username !== Env.get("USER_MASTER")) {
 
-    const dataa = request.only(['restritivo', 'posicional'])
+      const user = await User
+        .query()
+        .where('id', userAuth.id)
+        .with('profile')
+        .fetch()
 
-    const checkPosRest = await Regex.ResPost(dataa)
+      const restritivo = user.rows[0].$relations.profile.rows[0].restritivo
+      const posicional = user.rows[0].$relations.profile.rows[0].posicional
 
-    console.log(checkPosRest)
+      const { valid, errors } = await Regex.ResPost(restritivo, posicional)
 
-    
-    
-    if (check.read || userAuth.username === Env.get("USER_MASTER")) {
+      //verifica se a leitura dos campos estão corretos.
+      if (!valid) {
+        return (Message.messageBadRequest(errors))
+      }
+      //check as regras para o usuário logado  
+      const check = await Rules.rulesUser(userAuth)
+
+      //check se o usuário tem autorização para acessar o resultado
+      if (check.read) {
+
+        if (!request._body.id) {
+
+          const users = await User
+            .query()
+            .with('profile')
+            .fetch()
+
+          const checkResPost = await Rules.rulesResPostUser(restritivo, posicional, users)
+
+          return checkResPost
+        }
+
+        if (request._body.id) {
+          
+          const user = await User
+            .query()
+            .where('id', request._body.id)
+            .with('profile')
+            .fetch()
+
+          if (user.rows.length === 0) {
+            return Message.messageNotFound(`Not found id User`)
+          } else {
+
+            return user
+          }
+
+        }
+      } else {
+
+        return Message.messageUnauthorized('Unauthorized')
+      }
+
+    } else {
 
       if (!request._body.id) {
+
         const users = await User
           .query()
           .with('profile')
@@ -49,11 +100,7 @@ class UserController {
 
           return user
         }
-
       }
-    } else {
-
-      return Message.messageUnauthorized('Unauthorized')
     }
   }
 
@@ -96,7 +143,7 @@ class UserController {
 
       const user_ = await User.create(data)
 
-      return user_
+      return Message.messageOk('Person created success')
 
     } else {
 
@@ -155,7 +202,7 @@ class UserController {
       await user.delete()
 
       return Message.messageUnauthorized('Deleted')
-    
+
     } else {
 
       return Message.messageUnauthorized('Unauthorized')

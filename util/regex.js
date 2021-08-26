@@ -1,35 +1,35 @@
 const { functions } = require("lodash")
+const User = use("App/Models/User")
 
 module.exports = {
 
   ResPost:
 
-    function (data) {
+    async function (restritivo, posicional) {
 
       const errors = {}
 
-      if (data.restritivo) {
+      if (restritivo) {
 
         const regEx = /^[A-Z]/
 
-        if (data.restritivo.split("").length !== 1) {
+        if (restritivo.split("").length !== 1) {
           errors.length = 'Restritivo have to have a letter bettwen A into Z'
         }
 
-        if (!data.restritivo.match(regEx)) {
+        if (!restritivo.match(regEx)) {
           errors.Upcase = 'Restritivo have to have a letter upcase'
         }
       }
 
-      if (data.posicional) {
-        
-        const regEx = /^([0-9]{1,2})?$/ 
+      if (posicional) {
 
-        if (!data.posicional.toString().match(regEx)) {
+        const regEx = /^([0-9]{1,2})?$/
+
+        if (!posicional.toString().match(regEx)) {
           errors.number = 'Posicional have to have a Integer Number'
         }
       }
-
 
       return {
         errors,

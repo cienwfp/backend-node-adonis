@@ -1,6 +1,8 @@
 'use restrict'
 
-const { functions } = require("lodash")
+const { isNull } = require("lodash")
+const _ = require("lodash")
+const Env = use('Env')
 
 const User = use('App/Models/User')
 
@@ -17,6 +19,23 @@ var PosRest = {
 }
 
 module.exports = {
+
+  userIsLogin:
+    async function (userAuth) {
+
+      const user = await User
+        .query()
+        .where('id', userAuth.id)
+        .with('profile')
+        .fetch()
+
+      const restritivo = user.rows[0].$relations.profile.rows[0].restritivo
+      const posicional = user.rows[0].$relations.profile.rows[0].posicional
+
+      return {restritivo: restritivo, posicional: posicional}
+
+    },
+
   rulesUser:
     async function (userAuth) {
 
@@ -61,28 +80,6 @@ module.exports = {
       }
     },
 
-  rulesAddress:
-    async function (userAuth) {
-
-      const user = await User
-        .query()
-        .where('id', userAuth.id)
-        .with('profile')
-        .fetch()
-
-      const rules_ = user.rows[0].$relations.profile.rows[0]
-
-      if (!rules_) {
-
-        return rules
-
-      } else {
-
-        return rules_.rules.updade
-
-      }
-    },
-
   rulesPerson:
     async function (userAuth) {
 
@@ -100,34 +97,88 @@ module.exports = {
 
       } else {
 
-        return rules_.rules.delete
+        return rules_.rules.person
 
       }
     },
 
-  rulesPosRes:
-    async function (userAuth) {
+  rulesResPostUser:
+    async function (restritivo, posicional, users) {
 
-      const user = await User
-        .query()
-        .where('id', userAuth.id)
-        .with('profile')
-        .fetch()
+      var usersFilter
+      var usersFilter_ = new Array()
 
-      const PosRest_ = user.rows[0].$relations.profile.rows[0]
+      for (i in users.rows) {
 
-      if (!PosRest_) {
+        if
+          (users.rows[i].$relations.profile.rows[0] &&
+          users.rows[i].$relations.profile.rows.length !== 0) {
 
-        return (PosRest)
-        
-      } else {
+          const restritivoPesq = (users.rows[i].$relations.profile.rows[0].restritivo)
+          const posicionalPesq = (users.rows[i].$relations.profile.rows[0].posicional)
 
-        PosRest = {
-          posicional: PosRest_.posicional,
-          restritivo: PosRest_.restritivo
+          if (restritivo === restritivoPesq && posicional >= posicionalPesq) {
+
+            usersFilter = { ...users.rows[i].$attributes, ...users.rows[i].$relations }
+
+          }
+
+        } else {
+
+          usersFilter = { ...users.rows[i].$attributes, ...users.rows[i].$relations }
+
         }
 
-      return (PosRest)
+        usersFilter_.push(usersFilter)
+
       }
+
+      return usersFilter_
     },
+
+  rulesResPostPeople:
+    async function (restritivo, posicional, people) {
+
+      var peopleFilter
+      var peopleFilter_ = new Array()
+
+      for (i in people.rows) {
+
+        if (people.rows[i] !== 0) {
+
+          const restritivoPesq = (people.rows[i].restritivo)
+          const posicionalPesq = (people.rows[i].posicional)
+
+          if
+            ((restritivo == restritivoPesq && posicional >= posicionalPesq) ||
+            (!restritivoPesq) && (!posicionalPesq)) {
+
+            peopleFilter = { ...people.rows[i].$attributes, ...people.rows[i].$relations }
+
+            peopleFilter_.push(peopleFilter);
+
+          }
+
+        }
+      }
+      return peopleFilter_
+    },
+
+  rulesResPostPeopleUpdateDelete:
+    async function (restritivo, posicional, people) {
+
+      const restritivoPesq = (people.restritivo)
+      const posicionalPesq = (people.posicional)
+
+      if
+        ((restritivo == restritivoPesq && posicional >= posicionalPesq) ||
+        (!restritivoPesq) && (!posicionalPesq)) {
+
+        return true
+
+      }
+
+      return false
+ 
+    }
 }

@@ -22,7 +22,7 @@ class ProfileController {
       const profile = await Profile
         .query()
         .where('id', id)
-        .with('users.profile')
+        .with('users')
         .fetch()
 
       if (profile.rows.length === 0) {
@@ -36,12 +36,10 @@ class ProfileController {
     if (!request.body.id) {
       const profile = await Profile
         .query()
-        .where('id', request._body.id)
-        .with('user')
+        .with('users')
         .fetch()
 
-      const profiles = await Profile.all()
-      return profiles
+      return profile
     }
   }
 

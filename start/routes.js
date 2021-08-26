@@ -16,6 +16,12 @@
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
 
+/*Atention
+Route for create db of test
+This Route will use for dev
+*/
+  Route
+  .post('/criardadosfalso', 'CreateController.data')
 
 // Route for authentication user
 Route

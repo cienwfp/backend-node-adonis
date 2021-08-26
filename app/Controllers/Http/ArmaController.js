@@ -22,24 +22,26 @@ class ArmaController {
       request._body.numero_serie === null) &&
       !request._body.tipo_arma) {
 
-      const armas = await Arma.all()
+      const armas = await Arma
+        .query()
+        .with('people')
+        .fetch()
+
       return (armas)
 
     }
+
     if (request._body.numero_serie) {
 
-      const arma = await Arma.findBy('numero_serie', request._body.numero_serie)
+      const arma = await Arma
+        .query()
+        .where('numero_serie', request._body.numero_serie)
+        .with('people')
+        .fetch()
 
-      if (arma) {
-        if (arma.personId) {
-          const prorpeties = await Person.find(arma.personId)
-          return (
-            [arma, prorpeties]
-          )
+      if (arma.rows.length !== 0) {
 
-        } else {
-          return (arma)
-        }
+        return (arma)
 
       } else {
         return Message.messageNotFound('Not found weapon with serial number')
@@ -50,6 +52,7 @@ class ArmaController {
       const armas = await Arma
         .query()
         .where('tipo_arma', request._body.tipo_arma)
+        .with('people')
         .fetch()
 
       if (armas.rows.length === 0) {
