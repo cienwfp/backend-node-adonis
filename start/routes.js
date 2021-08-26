@@ -21,7 +21,7 @@ Route for create db of test
 This Route will use for dev
 */
   Route
-  .post('/criardadosfalso', 'CreateController.data')
+  .get('/criardadosfalsos', 'CreateController.create')
 
 // Route for authentication user
 Route
