@@ -118,15 +118,18 @@ class ArmaController {
       //if (!data.usuario_ultima_atualizacao || data.usuario_ultima_atualizacao == null) {
       //return Message.messageUnauthorized('Unauthorized')
       //}
-
-      const arma__ = await Arma.create(data)
+      data.usuario_ultima_atualizacao = auth.user.username
+      
+      await Arma.create(data)
 
       return Message.messageOk('Weapon create sucess')
 
     } else {
 
       data.usuario_ultima_atualizacao = auth.user.username
-      const arma_ = await Arma.create(data)
+      
+      await Arma.create(data)
+      
       return Message.messageOk('Weapon create sucess')
 
     }
