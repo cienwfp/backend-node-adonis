@@ -44,7 +44,7 @@ class ArmaController {
         return (arma)
 
       } else {
-        return Message.messageNotFound('Not found weapon with serial number')
+        return Message.messageNotFound('Arma não encontrada com o número de série')
       }
     }
 
@@ -56,7 +56,7 @@ class ArmaController {
         .fetch()
 
       if (armas.rows.length === 0) {
-        return Message.messageNotFound(`Not found weapon of the type ${request._body.tipo_arma}`)
+        return Message.messageNotFound(`Tipo de arma não encontrado ${request._body.tipo_arma}`)
       } else {
         return armas
       }
@@ -94,14 +94,14 @@ class ArmaController {
     )
 
     if (!data.tipo_arma) {
-      return Message.messageNotAcceptable('Not send weapon')
+      return Message.messageNotAcceptable('Inserir o tipo de arma')
     }
 
     if (data.numero_serie !== null) {
       const arma_ = await Arma.findBy('numero_serie', data.numero_serie)
 
       if (arma_) {
-        return Message.messageConflict('Weapon exist')
+        return Message.messageConflict('Arma já existe')
       }
 
     }
@@ -111,7 +111,7 @@ class ArmaController {
       const people = await Person.find(data.personId)
 
       if (!people) {
-        return Message.messageNotFound('Not found personId')
+        return Message.messageNotFound('personId não encontrado')
       }
 
       //data.usuario_ultima_atualizacao = auth.user.username
@@ -121,13 +121,13 @@ class ArmaController {
 
       const arma__ = await Arma.create(data)
 
-      return Message.messageOk('Weapon create sucess')
+      return Message.messageOk('Arma criada com sucesso')
 
     } else {
 
       data.usuario_ultima_atualizacao = auth.user.username
       const arma_ = await Arma.create(data)
-      return Message.messageOk('Weapon create sucess')
+      return Message.messageOk('Arma criada com sucesso')
 
     }
 
@@ -147,20 +147,20 @@ class ArmaController {
 
     if (!data.id) {
 
-      return Message.messageNotAcceptable('Send id of the weapon')
+      return Message.messageNotAcceptable('Inserir id da arma')
     }
 
     if (data.personId) {
       const people = await Person.find(data.personId)
       if (!people) {
-        return Message.messageNotFound('Not found person')
+        return Message.messageNotFound('Pessoa não encontrada')
       }
     }
 
     const arma = await Arma.find(data.id)
 
     if (!arma) {
-      return Message.messageNotFound('Not found weapon')
+      return Message.messageNotFound('Arma não encontrada')
     }
 
     data.usuario_ultima_atualizacao = auth.user.username
@@ -168,7 +168,7 @@ class ArmaController {
     arma.merge(data)
     await arma.save()
 
-    return Message.messageOk('Update weapon sucess')
+    return Message.messageOk('Atualizada com sucesso')
 
   }
 
@@ -187,11 +187,11 @@ class ArmaController {
     const arma = await Arma.find(armaId)
 
     if (!arma) {
-      return Message.messageNotFound('Not found weapon')
+      return Message.messageNotFound('Arma não encontrada')
     }
     await arma.delete()
 
-    return Message.messageOk('Deleted sucess')
+    return Message.messageOk('Deletada com sucesso')
 
   }
 }

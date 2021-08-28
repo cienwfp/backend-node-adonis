@@ -26,7 +26,7 @@ class PhotoController {
     const onlyPhotos = request.body.onlyPhotos
 
     if (typeof (onlyPhotos) !== "boolean") {
-      return Message.messageNotAcceptable('The onlyPhotos variable have to have boolean')
+      return Message.messageNotAcceptable('A variável onlyPhotos tem que ser true para sim ou false para não')
     }
 
     if (onlyPhotos === false) {
@@ -82,7 +82,7 @@ class PhotoController {
     const people = await Person.find(photo.personId)
 
     if (!people) {
-      return Message.messageNotFound("Not Found people")
+      return Message.messageNotFound("Pessoa não encontrada")
     }
 
     for (photo_base64_ of photo.photo_base64) {
@@ -95,7 +95,7 @@ class PhotoController {
         )
     }
 
-    return Message.messageOk('Photos saved')
+    return Message.messageOk('Foto gravada com sucesso')
   }
 
   /**
@@ -170,13 +170,13 @@ class PhotoController {
     const photo = await Photo.find(data.id)
 
     if (!photo) {
-      return Message.messageNotFound('Not found photo')
+      return Message.messageNotFound('Foto não encontrada')
     }
 
     photo.merge(data)
     await photo.save()
 
-    return Message.messageOk('Update photo sucess')
+    return Message.messageOk('Atualizada com sucesso')
 
     /*const photo = await Photo.find(params.id)
   
@@ -203,12 +203,12 @@ class PhotoController {
     const photo = await Photo.findBy('id', request._body.id)
 
     if (!photo) {
-      return Message.messageNotFound(`Not found photo`)
+      return Message.messageNotFound(`Foto não encontrada`)
     }
 
     await photo.delete()
 
-    return Message.messageOk('Delete photo sucess')
+    return Message.messageOk('Deletada com sucesso')
 
     //const photoId = request.body.id
 

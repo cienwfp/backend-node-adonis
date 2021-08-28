@@ -42,7 +42,7 @@ class VehicleController {
         }
 
       } else {
-        return Message.messageNotFound(`Not found vehicle whit placa ${request._body.placa}`)
+        return Message.messageNotFound(`Veículo não encontrado com a placa ${request._body.placa}`)
       }
     }
   }
@@ -60,13 +60,13 @@ class VehicleController {
     const data = request.only(['personId', 'placa', 'tipo', 'marca', 'modelo', 'cor', 'obs', 'pais', 'uf', 'municipio', 'identificador', 'ano_fabricacao', 'marcas_visiveis', 'proprietario', 'real_condutor', 'instituicao_proprietaria', 'usuario_ultima_alteracao', 'status', 'posicional', 'restritivo'])
 
     if (!data.placa) {
-      return Message.messageNotAcceptable('Not send placa')
+      return Message.messageNotAcceptable('Inserir a placa')
     }
 
     const vehicle = await Vehicle.findBy('placa', data.placa)
 
     if (vehicle) {
-      return Message.messageConflict('Vehicle exist')
+      return Message.messageConflict('Veículo já existe')
     }
 
     if (data.personId) {
@@ -74,7 +74,7 @@ class VehicleController {
       const people = await Person.find(data.personId)
 
       if (!people) {
-        return Message.messageNotFound('Not found people')
+        return Message.messageNotFound('Pessoa não encontrada')
       }
 
       const vehicle = await Vehicle.create(data)
@@ -104,13 +104,13 @@ class VehicleController {
     const vehicle = await Vehicle.find(data.id)
 
     if (!vehicle) {
-      return Message.messageNotFound('Not found vehicle with')
+      return Message.messageNotFound('Veículo não encontrado')
     }
 
     vehicle.merge(data)
     await vehicle.save()
 
-    return Message.messageOk('Update vehicle sucess')
+    return Message.messageOk('Atualizado com sucesso')
 
   }
 
@@ -126,12 +126,12 @@ class VehicleController {
     const vehicle = await Vehicle.findBy('placa', request._body.placa)
 
     if (!vehicle) {
-      return Message.messageNotFound(`Not found vehicle with ${request._body.placa}`)
+      return Message.messageNotFound(`Veículo não encontrado com a placa ${request._body.placa}`)
     }
 
     await vehicle.delete()
 
-    return Message.messageOk('Delete vehicle sucess')
+    return Message.messageOk('Deletado com sucesso')
 
   }
 }
