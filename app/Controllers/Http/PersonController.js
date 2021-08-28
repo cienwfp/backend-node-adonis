@@ -62,13 +62,13 @@ class PersonController {
             .fetch()
 
           if (people.rows.length === 0) {
-            return Message.messageNotFound(`Not found people`)
+            return Message.messageNotFound(`Pessoa não encontrada`)
           } else {
 
             const checkResPost = await Rules.rulesResPostPeople(restritivo, posicional, people)
 
             if (checkResPost.length === 0) {
-              return Message.messageUnauthorized('Unauthorized')
+              return Message.messageUnauthorized('Não autorizado')
             }
             return checkResPost
 
@@ -76,7 +76,7 @@ class PersonController {
         }
 
         if (typeof (onlyPhotos) !== "boolean") {
-          return Message.messageNotAcceptable('The onlyPhotos variable have to have boolean')
+          return Message.messageNotAcceptable('A variável onlyPhotos tem que ser true para sim ou false para não')
         }
 
         if (onlyPhotos === false) {
@@ -92,7 +92,7 @@ class PersonController {
           const checkResPost = await Rules.rulesResPostPeople(restritivo, posicional, people)
 
           if (checkResPost.length === 0) {
-            return Message.messageUnauthorized('Unauthorized')
+            return Message.messageUnauthorized('Não autorizado')
           }
           return checkResPost
 
@@ -103,14 +103,14 @@ class PersonController {
           const checkResPost = await Rules.rulesResPostPeople(restritivo, posicional, people)
 
           if (checkResPost.length === 0) {
-            return Message.messageUnauthorized('Unauthorized')
+            return Message.messageUnauthorized('Não autorizado')
           }
           return checkResPost
 
         }
       } else {
 
-        return Message.messageUnauthorized('User Unauthorized for read')
+        return Message.messageUnauthorized('Usuário não autorizado para leitura')
 
       }
 
@@ -131,14 +131,14 @@ class PersonController {
           .fetch()
 
         if (people.rows.length === 0) {
-          return Message.messageNotFound(`Not found people`)
+          return Message.messageNotFound(`Pessoa não enontrada`)
         } else {
           return people
         }
       }
 
       if (typeof (onlyPhotos) !== "boolean") {
-        return Message.messageNotAcceptable('The onlyPhotos variable have to have boolean')
+        return Message.messageNotAcceptable('A variável onlyPhotos tem que ser true para sim ou false para não')
       }
 
       if (onlyPhotos === false) {
@@ -197,7 +197,7 @@ class PersonController {
     }
 
     if (data_.rows.length !== 0) {
-      return Message.messageConflict('People already registared')
+      return Message.messageConflict('Pessoa já possui registro')
     }
 
     if (!data.cpf) {
@@ -205,13 +205,13 @@ class PersonController {
     } else {
       const cpf = Validation.validationCFP(data.cpf)
       if (cpf === false) {
-        return messageNotFound('CPF is not valid')
+        return messageNotFound('CPF inválido')
       }
     }
 
     const people = await Person.create(data)
 
-    return Message.messageCreated('Person created sucess')
+    return Message.messageCreated('criado com sucesso')
 
   }
 
@@ -250,23 +250,23 @@ class PersonController {
         const people = await Person.find(data.id)
 
         if (!people) {
-          return Message.messageNotFound('Not found people')
+          return Message.messageNotFound('Não encontrado')
         }
 
         const checkResPost = await Rules.rulesResPostPeopleUpdateDelete(restritivo, posicional, people)
 
         if (!checkResPost) {
-          return Message.messageUnauthorized('Unauthorized')
+          return Message.messageUnauthorized('Não autorizado')
         }
 
         people.merge(data)
         await people.save()
 
-        return Message.messageOk('Update people sucess')
+        return Message.messageOk('Atualizado com sucesso')
 
       } else {
 
-        return Message.messageUnauthorized('Unauthorized')
+        return Message.messageUnauthorized('Não autorizado')
 
       }
 
@@ -276,13 +276,13 @@ class PersonController {
       const people = await Person.find(data.id)
 
       if (!people) {
-        return Message.messageNotFound('Not found people')
+        return Message.messageNotFound('Não encontrado')
       }
 
       people.merge(data)
       await people.save()
 
-      return Message.messageOk('Update people sucess')
+      return Message.messageOk('Atualizado com sucesso')
 
     }
   }
@@ -321,22 +321,22 @@ class PersonController {
         const people = await Person.find(peopleId)
 
         if (!people) {
-          return Message.messageNotFound('Not found people')
+          return Message.messageNotFound('Não encontrado')
         }
 
         const checkResPost = await Rules.rulesResPostPeopleUpdateDelete(restritivo, posicional, people)
 
         if (!checkResPost) {
-          return Message.messageUnauthorized('Unauthorized')
+          return Message.messageUnauthorized('Não autorizado')
         }
 
         await people.delete()
 
-        return Message.messageOk('Deleted sucess')
+        return Message.messageOk('Deletado com sucesso')
 
       } else {
 
-        return Message.messageUnauthorized('Unauthorized')
+        return Message.messageUnauthorized('Não autorizado')
 
       }
 
@@ -347,12 +347,12 @@ class PersonController {
       const people = await Person.find(peopleId)
 
       if (!people) {
-        return Message.messageNotFound('Not found people')
+        return Message.messageNotFound('Não encontrado')
       }
 
       await people.delete()
 
-      return Message.messageOk('Deleted sucess')
+      return Message.messageOk('Deletado com sucesso')
 
     }
   }

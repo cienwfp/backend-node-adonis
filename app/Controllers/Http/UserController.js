@@ -38,13 +38,13 @@ class UserController {
     const people = await Person.find(personId)
 
     if (!people) {
-      return Message.messageNotFound('Not Found people')
+      return Message.messageNotFound('Pessoa não encontrada')
     }
 
     const user = await User.findBy('personId', data.personId)
 
     if (user) {
-      return Message.messageBadRequest("This people exist user")
+      return Message.messageBadRequest("Usuário existente para esta pessoa")
     }
 
     const user_ = await User.create(data)
@@ -90,12 +90,12 @@ class UserController {
     const user = await User.find(data.id)
     
     if (!user) {
-      return Message.messageNotFound('Not found user')
+      return Message.messageNotFound('Usuário não encontrado')
     }
     user.merge(data)
     await user.save()
 
-    return Message.messageOk('Update user sucess')
+    return Message.messageOk('Atualizado com sucesso')
 
   }
 
@@ -128,14 +128,14 @@ class UserController {
         (userAuth__.unidade !== '1') ||
         (userAuth__.carteira !== 'segor')) {
 
-        return Message.messageUnauthorized('Not authorized')
+        return Message.messageUnauthorized('Não autorizado')
       }
     }
 
 
     await user.delete()
 
-    return Message.messageUnauthorized('Deleted')
+    return Message.messageUnauthorized('Deletado com sucessoS')
 
   }
 }

@@ -111,7 +111,7 @@ class RelationshipPeopleToPersonController {
 
     } else {
 
-     return Message.messageNotFound('Not found people in db. You have to create person before relationship')
+     return Message.messageNotFound('Pessoa não encontrada na base de dados. Você tem que criar uma pessoa antes de relacionamento')
     }
   }
 
@@ -154,10 +154,10 @@ class RelationshipPeopleToPersonController {
 
         } while (i < peoples.rows.length)
 
-        return Message.messageOk('Deleted success')
+        return Message.messageOk('Deletado com sucesso')
 
       } else {
-        return Message.messageBadRequest('People not has relationship')
+        return Message.messageBadRequest('Pessoa não tem relacionamento')
       }
 
     } else {
@@ -174,11 +174,11 @@ class RelationshipPeopleToPersonController {
 
         await relation.rows[0].delete()
 
-        return Message.messageOk('Deleted success')
+        return Message.messageOk('Deletado com sucesso')
 
       } else {
 
-        return Message.messageBadRequest('People not has relationship')
+        return Message.messageBadRequest('Pessoa não tem relacionamento')
       }
     }
 

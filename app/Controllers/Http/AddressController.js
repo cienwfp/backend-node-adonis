@@ -33,7 +33,7 @@ class AddressController {
         .fetch()
 
       if (address.rows.length === 0) {
-        return Message.messageNotFound(`Not found address`)
+        return Message.messageNotFound(`Não encontrado`)
       } else {
 
         return address
@@ -71,7 +71,7 @@ class AddressController {
         ]
       )
     if (!personId.personId) {
-      return Message.messageNotAcceptable('Not send personId')
+      return Message.messageNotAcceptable('Inserir personId correto')
     }
 
     const data = request
@@ -92,7 +92,7 @@ class AddressController {
     const people = await People.find(personId.personId)
 
     if (!people) {
-      return Message.messageNotFound('Not found personId')
+      return Message.messageNotFound('Não encontrado')
     }
 
     const address = await Address.findOrCreate(data)
@@ -102,7 +102,7 @@ class AddressController {
     people.address = await people.address().fetch()
 
 
-    return Message.messageOk('Address create sucess')
+    return Message.messageOk('Criado com sucesso')
   }
   //return Message.messageConflict('People already registared')  
 
@@ -176,12 +176,12 @@ class AddressController {
     const address = await Address.find(data.id)
 
     if (!address) {
-      return Message.messageNotFound('Not found address')
+      return Message.messageNotFound('Não encontrado')
     }
     address.merge(data)
     await address.save()
 
-    return Message.messageOk('Update address sucess')
+    return Message.messageOk('Atualizado com sucesso')
   }
 
   /**
@@ -210,11 +210,11 @@ class AddressController {
     const address = await Address.find(addressId)
 
     if (!address) {
-      return Message.messageNotFound('Not found address')
+      return Message.messageNotFound('Não encontrado')
     }
     await address.delete()
 
-    return Message.messageOk('Deleted sucess')
+    return Message.messageOk('Deletado com sucesso')
 
   }
 }

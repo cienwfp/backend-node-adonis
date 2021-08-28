@@ -17,10 +17,10 @@ class SessionController {
         const token = await auth.attempt(username, password)
         return token
       } else {
-        return Message.messageUnauthorized('User enabled equal false')
+        return Message.messageUnauthorized('Usuário nao habilitado')
       }
     }else{
-      return Message.messageNotFound('Not found user')
+      return Message.messageNotFound('Usuário não encontrado')
     }
   }
 }

@@ -26,7 +26,7 @@ class ProfileController {
         .fetch()
 
       if (profile.rows.length === 0) {
-        return Message.messageNotFound(`Not found id Profile`)
+        return Message.messageNotFound(`Id do Perfil não encontrado`)
 
       } else {
 
@@ -133,13 +133,13 @@ class ProfileController {
     const profile = await Profile.find(data.id)
 
     if (!profile) {
-      return Message.messageNotFound('Not found profile')
+      return Message.messageNotFound('Perfil não encontrado')
     }
 
     profile.merge(data)
     await profile.save()
 
-    return Message.messageOk('Update profile sucess')
+    return Message.messageOk('Perfil atualizado com sucesso')
 
 
   }
@@ -156,10 +156,10 @@ class ProfileController {
     if (profile) {
 
       await profile.delete()
-      return Message.messageOk('deleted')
+      return Message.messageOk('Perfil deletado')
 
     } else {
-      return Message.messageNotFound('Not Found profile')
+      return Message.messageNotFound('Perfil não encontrado')
     }
 
     /*
