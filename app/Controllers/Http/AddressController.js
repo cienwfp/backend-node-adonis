@@ -77,9 +77,15 @@ class AddressController {
     const data = request
       .only(
         [
-          'tipo_logradouro',
-          'logradouro',
-          'numero'
+          "tipo_logradouro",
+          "logradouro",
+          "numero",
+          "complemento",
+          "bairro",
+          "cidade",
+          "uf",
+          "cep",
+          "obs"
         ]
       )
 
