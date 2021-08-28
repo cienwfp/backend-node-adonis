@@ -82,7 +82,7 @@ class PhotoController {
     const people = await Person.find(photo.personId)
 
     if (!people) {
-      return Message.messageNotFound("Pessoa não encontrada")
+      return Message.messageNotFound("Não encontrado")
     }
 
     for (photo_base64_ of photo.photo_base64) {
@@ -95,7 +95,7 @@ class PhotoController {
         )
     }
 
-    return Message.messageOk('Foto gravada com sucesso')
+    return Message.messageOk('Gravado com sucesso')
   }
 
   /**
@@ -170,13 +170,13 @@ class PhotoController {
     const photo = await Photo.find(data.id)
 
     if (!photo) {
-      return Message.messageNotFound('Foto não encontrada')
+      return Message.messageNotFound('Não encontrado')
     }
 
     photo.merge(data)
     await photo.save()
 
-    return Message.messageOk('Atualizada com sucesso')
+    return Message.messageOk('Atualizado com sucesso')
 
     /*const photo = await Photo.find(params.id)
   
@@ -203,12 +203,12 @@ class PhotoController {
     const photo = await Photo.findBy('id', request._body.id)
 
     if (!photo) {
-      return Message.messageNotFound(`Foto não encontrada`)
+      return Message.messageNotFound(`Não encontrado`)
     }
 
     await photo.delete()
 
-    return Message.messageOk('Deletada com sucesso')
+    return Message.messageOk('Deletado com sucesso')
 
     //const photoId = request.body.id
 

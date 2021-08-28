@@ -197,7 +197,7 @@ class PersonController {
     }
 
     if (data_.rows.length !== 0) {
-      return Message.messageConflict('Pessoa já registrada')
+      return Message.messageConflict('Pessoa já possui registro')
     }
 
     if (!data.cpf) {
@@ -211,7 +211,7 @@ class PersonController {
 
     const people = await Person.create(data)
 
-    return Message.messageCreated('Pessoa criada com sucesso')
+    return Message.messageCreated('criado com sucesso')
 
   }
 
@@ -250,7 +250,7 @@ class PersonController {
         const people = await Person.find(data.id)
 
         if (!people) {
-          return Message.messageNotFound('Pessoa não encontrada')
+          return Message.messageNotFound('Não encontrado')
         }
 
         const checkResPost = await Rules.rulesResPostPeopleUpdateDelete(restritivo, posicional, people)
@@ -262,7 +262,7 @@ class PersonController {
         people.merge(data)
         await people.save()
 
-        return Message.messageOk('Atualizada com sucesso')
+        return Message.messageOk('Atualizado com sucesso')
 
       } else {
 
@@ -276,7 +276,7 @@ class PersonController {
       const people = await Person.find(data.id)
 
       if (!people) {
-        return Message.messageNotFound('Pessoa não encontrada')
+        return Message.messageNotFound('Não encontrado')
       }
 
       people.merge(data)
@@ -321,13 +321,13 @@ class PersonController {
         const people = await Person.find(peopleId)
 
         if (!people) {
-          return Message.messageNotFound('Pessoa não encontrada')
+          return Message.messageNotFound('Não encontrado')
         }
 
         const checkResPost = await Rules.rulesResPostPeopleUpdateDelete(restritivo, posicional, people)
 
         if (!checkResPost) {
-          return Message.messageUnauthorized('Não autorizadi')
+          return Message.messageUnauthorized('Não autorizado')
         }
 
         await people.delete()
@@ -347,7 +347,7 @@ class PersonController {
       const people = await Person.find(peopleId)
 
       if (!people) {
-        return Message.messageNotFound('Pessoa não encontrada')
+        return Message.messageNotFound('Não encontrado')
       }
 
       await people.delete()

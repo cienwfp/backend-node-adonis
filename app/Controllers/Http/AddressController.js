@@ -33,7 +33,7 @@ class AddressController {
         .fetch()
 
       if (address.rows.length === 0) {
-        return Message.messageNotFound(`Endereço não encontrado`)
+        return Message.messageNotFound(`Não encontrado`)
       } else {
 
         return address
@@ -86,7 +86,7 @@ class AddressController {
     const people = await People.find(personId.personId)
 
     if (!people) {
-      return Message.messageNotFound('personId não encontrado')
+      return Message.messageNotFound('Não encontrado')
     }
 
     const address = await Address.findOrCreate(data)
@@ -170,7 +170,7 @@ class AddressController {
     const address = await Address.find(data.id)
 
     if (!address) {
-      return Message.messageNotFound('Endereço não encontrado')
+      return Message.messageNotFound('Não encontrado')
     }
     address.merge(data)
     await address.save()
@@ -204,7 +204,7 @@ class AddressController {
     const address = await Address.find(addressId)
 
     if (!address) {
-      return Message.messageNotFound('Endereço não encontrado')
+      return Message.messageNotFound('Não encontrado')
     }
     await address.delete()
 

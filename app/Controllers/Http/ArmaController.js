@@ -111,7 +111,7 @@ class ArmaController {
       const people = await Person.find(data.personId)
 
       if (!people) {
-        return Message.messageNotFound('personId não encontrado')
+        return Message.messageNotFound('Não encontrado')
       }
 
       //data.usuario_ultima_atualizacao = auth.user.username
