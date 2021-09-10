@@ -24,7 +24,7 @@ class CreateController {
 
   async create() {
 
-    if (Env.get("MODE_DEV")) {
+    if (Env.get("MODE_DEV") === "1") {
 
       var result = {}
 
@@ -216,9 +216,15 @@ class CreateController {
 
         }
       }
+
+      return result
+    
+    } else {
+
+      return ({"message": "Para utilzar esta rota deve utilizar MODE_DEV = 1"})
     }
 
-    return result
+    
   }
 }
 

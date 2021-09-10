@@ -14,10 +14,10 @@ const _ = require('lodash')
  */
 class ProfileController {
 
-  async index({ request }) {
+  async index({ request, Response }) {
 
     const id = request.body.id
-    
+
     if (request.body.id) {
       const profile = await Profile
         .query()
@@ -26,13 +26,22 @@ class ProfileController {
         .fetch()
 
       if (profile.rows.length === 0) {
-        return Message.messageNotFound(`Id do Perfil não encontrado`)
+
+        return (
+
+          response.status(404),
+          Message.messageNotFound(`Id do Perfil não encontrado`)
+
+        )
 
       } else {
 
         return profile
+
       }
+
     }
+
     if (!request.body.id) {
       const profile = await Profile
         .query()
@@ -40,7 +49,9 @@ class ProfileController {
         .fetch()
 
       return profile
+
     }
+
   }
 
   /*  
@@ -54,14 +65,14 @@ class ProfileController {
 
 
 
-  async store({ request }) {
+  async store({ request, response }) {
 
     /**
    * Create/save a new profile.
    */
 
     var dados = {}
-    
+
     dados.rules = {
       user: {
         create: false,
@@ -94,13 +105,13 @@ class ProfileController {
         delete: false
       }
     }
-    const userId = request.body.userId
 
+    const userId = request.body.userId
 
     const dadosReq = request.only(['profile', 'unidade', 'carteira', 'rules', 'restritivo', 'posicional'])
 
     _.merge(dados, dadosReq)
-    
+
     const user = await User.find(userId)
 
     const profile = await Profile.findOrCreate(dados)
@@ -109,7 +120,12 @@ class ProfileController {
 
     profile.user = await profile.users().fetch()
 
-    return profile
+    return (
+
+      response.status(200),
+      Message.messageOk('Profile cadastrado com sucesso')
+
+    )
 
   }
 
@@ -133,14 +149,24 @@ class ProfileController {
     const profile = await Profile.find(data.id)
 
     if (!profile) {
-      return Message.messageNotFound('Perfil não encontrado')
+
+      return (
+
+        response.status(404),
+        Message.messageNotFound('Perfil não encontrado')
+
+      )
     }
 
     profile.merge(data)
     await profile.save()
 
-    return Message.messageOk('Perfil atualizado com sucesso')
+    return (
 
+      response.status(200),
+      Message.messageOk('Perfil atualizado com sucesso')
+
+    )
 
   }
 
@@ -156,10 +182,23 @@ class ProfileController {
     if (profile) {
 
       await profile.delete()
-      return Message.messageOk('Perfil deletado')
+
+      return (
+
+        response.status(200),
+        Message.messageOk('Perfil deletado')
+
+      )
 
     } else {
-      return Message.messageNotFound('Perfil não encontrado')
+
+      return (
+
+        response.status(404),
+        Message.messageNotFound('Perfil não encontrado')
+
+      )
+
     }
 
     /*
@@ -174,7 +213,8 @@ class ProfileController {
       }
   */
 
-
   }
+
 }
+
 module.exports = ProfileController

@@ -21,12 +21,18 @@ class PhotoController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index({ request }) {
+  async index({ request, response }) {
 
     const onlyPhotos = request.body.onlyPhotos
 
     if (typeof (onlyPhotos) !== "boolean") {
-      return Message.messageNotAcceptable('A variável onlyPhotos tem que ser true para sim ou false para não')
+      
+      return (
+     
+        response.status(406),
+        Message.messageNotAcceptable('A variável onlyPhotos tem que ser true para sim ou false para não')
+
+      )
     }
 
     if (onlyPhotos === false) {
@@ -48,9 +54,7 @@ class PhotoController {
 
     }
 
-
   }
-
 
 
   /**
@@ -82,7 +86,14 @@ class PhotoController {
     const people = await Person.find(photo.personId)
 
     if (!people) {
-      return Message.messageNotFound("Não encontrado")
+
+      return (
+
+        response.status(404),
+        Message.messageNotFound("Não encontrado")
+
+      )
+
     }
 
     for (photo_base64_ of photo.photo_base64) {
@@ -95,7 +106,13 @@ class PhotoController {
         )
     }
 
-    return Message.messageOk('Gravado com sucesso')
+    return (
+
+      response.status(200),
+      Message.messageOk('Gravado com sucesso')
+
+    )
+
   }
 
   /**
@@ -123,10 +140,7 @@ class PhotoController {
         }
       }
     } 
-  
-  
-  
-    
+     
     if (request._body.id) {
       const photo = await Photo
         .query()
@@ -141,7 +155,6 @@ class PhotoController {
         return photo
       }*/
   }
-
 
 
   /**
@@ -170,13 +183,25 @@ class PhotoController {
     const photo = await Photo.find(data.id)
 
     if (!photo) {
-      return Message.messageNotFound('Não encontrado')
+
+      return(
+
+        response.status(404),
+        Message.messageNotFound('Não encontrado')
+
+      )
+
     }
 
     photo.merge(data)
     await photo.save()
 
-    return Message.messageOk('Atualizado com sucesso')
+    return(
+      
+      response.status(200),
+      Message.messageOk('Atualizado com sucesso')
+
+    )
 
     /*const photo = await Photo.find(params.id)
   
@@ -203,12 +228,24 @@ class PhotoController {
     const photo = await Photo.findBy('id', request._body.id)
 
     if (!photo) {
-      return Message.messageNotFound(`Não encontrado`)
+
+      return(
+        
+        response.status(404),
+        Message.messageNotFound(`Não encontrado`)
+
+      )
+
     }
 
     await photo.delete()
 
-    return Message.messageOk('Deletado com sucesso')
+    return(
+      
+      response.status(200),
+      Message.messageOk('Deletado com sucesso')
+
+    )
 
     //const photoId = request.body.id
 

@@ -44,8 +44,16 @@ class ArmaController {
         return (arma)
 
       } else {
-        return Message.messageNotFound('Arma não encontrada com o número de série')
+
+        return (
+
+          response.status(404),
+          Message.messageNotFound('Arma não encontrada com o número de série')
+
+        )
+
       }
+
     }
 
     if (request._body.tipo_arma) {
@@ -56,9 +64,18 @@ class ArmaController {
         .fetch()
 
       if (armas.rows.length === 0) {
-        return Message.messageNotFound(`Tipo de arma não encontrado ${request._body.tipo_arma}`)
+        
+        return (
+
+          response.status(404),
+          Message.messageNotFound(`Tipo de arma não encontrado ${request._body.tipo_arma}`)
+
+        )
+
       } else {
+        
         return armas
+      
       }
     }
   }
@@ -94,14 +111,28 @@ class ArmaController {
     )
 
     if (!data.tipo_arma) {
-      return Message.messageNotAcceptable('Inserir o tipo de arma')
+      
+      return (
+        
+        response.status(406),
+        Message.messageNotAcceptable('Inserir o tipo de arma')
+
+      )
     }
 
     if (data.numero_serie !== null) {
+      
       const arma_ = await Arma.findBy('numero_serie', data.numero_serie)
 
       if (arma_) {
-        return Message.messageConflict('Arma já existe')
+        
+        return (
+
+          response.status(409),
+          Message.messageConflict('Arma já existe')
+
+        )
+      
       }
 
     }
@@ -111,7 +142,14 @@ class ArmaController {
       const people = await Person.find(data.personId)
 
       if (!people) {
-        return Message.messageNotFound('Não encontrado')
+        
+        return (
+
+          response.status(404),
+          Message.messageNotFound('Não encontrado')
+
+        )
+      
       }
 
       //data.usuario_ultima_atualizacao = auth.user.username
@@ -119,16 +157,33 @@ class ArmaController {
       //return Message.messageUnauthorized('Unauthorized')
       //}
       data.usuario_ultima_atualizacao = auth.user.username
-      
+
+      for (let prop in data) {
+        if (typeof(data[prop] === 'string') && data[prop] !== null) {
+          data[prop] = data[prop].toUpperCase()
+        }
+      }
+
       await Arma.create(data)
 
-      return Message.messageOk('Arma criada com sucesso')
+      return (
+        
+        response.status(200),
+        Message.messageOk('Arma criada com sucesso')
+
+      )
 
     } else {
 
       data.usuario_ultima_atualizacao = auth.user.username
       const arma_ = await Arma.create(data)
-      return Message.messageOk('Arma criada com sucesso')
+      
+      return (
+
+        response.status(200),
+        Message.messageOk('Arma criada com sucesso')
+
+      )
 
     }
 
@@ -146,22 +201,51 @@ class ArmaController {
 
     const data = request.body
 
+    for (let prop in data) {
+      if (typeof(data[prop] === 'string') && data[prop] !== null) {
+        data[prop] = data[prop].toUpperCase()
+      }
+    }
+
     if (!data.id) {
 
-      return Message.messageNotAcceptable('Inserir id da arma')
+      return (
+
+        response.status(406),
+        Message.messageNotAcceptable('Inserir id da arma')
+
+      )
+
     }
 
     if (data.personId) {
+
       const people = await Person.find(data.personId)
+      
       if (!people) {
-        return Message.messageNotFound('Pessoa não encontrada')
+      
+        return (
+          
+          response.status(404),
+          Message.messageNotFound('Pessoa não encontrada')
+
+        )
+
       }
+
     }
 
     const arma = await Arma.find(data.id)
 
     if (!arma) {
-      return Message.messageNotFound('Arma não encontrada')
+      
+      return (
+
+        response.status(404),
+        Message.messageNotFound('Arma não encontrada')
+
+      )
+
     }
 
     data.usuario_ultima_atualizacao = auth.user.username
@@ -169,7 +253,12 @@ class ArmaController {
     arma.merge(data)
     await arma.save()
 
-    return Message.messageOk('Atualizada com sucesso')
+    return (
+      
+      response.status(200),
+      Message.messageOk('Atualizada com sucesso')
+
+    )
 
   }
 
@@ -188,11 +277,23 @@ class ArmaController {
     const arma = await Arma.find(armaId)
 
     if (!arma) {
-      return Message.messageNotFound('Arma não encontrada')
+
+      return (
+
+        response.status(404),
+        Message.messageNotFound('Arma não encontrada')
+
+      )
     }
+
     await arma.delete()
 
-    return Message.messageOk('Deletada com sucesso')
+    return (
+
+      response.status(200),
+      Message.messageOk('Deletada com sucesso')
+
+    )
 
   }
 }

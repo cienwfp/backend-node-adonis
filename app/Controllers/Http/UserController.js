@@ -11,14 +11,14 @@ class UserController {
   async index() {
     const user = await User
       .query()
-      .with('profile') 
+      .with('profile')
       .fetch()
 
-      delete user.password
+    delete user.password
     return user
   }
 
-  async store({ request }) {
+  async store({ request, response }) {
 
     /**
      * Create user for people
@@ -26,25 +26,44 @@ class UserController {
      */
 
     const personId = params.personId
- 
+
     const data = request.only(["username", "email", "password"])
 
-    const { errors, valid } = validateRegisterUser(personId, data.username, data.email, data.password)   
-    
+    const { errors, valid } = validateRegisterUser(personId, data.username, data.email, data.password)
+
     if (!valid) {
-      return Message.messageNotAcceptable(errors)
+
+      return (
+
+        response.status(406),
+        Message.messageNotAcceptable(errors)
+
+      )
     }
 
     const people = await Person.find(personId)
 
     if (!people) {
-      return Message.messageNotFound('Pessoa não encontrada')
+
+      return (
+
+        response.status(404),
+        Message.messageNotFound('Pessoa não encontrada')
+
+      )
     }
 
     const user = await User.findBy('personId', data.personId)
 
     if (user) {
-      return Message.messageBadRequest("Usuário existente para esta pessoa")
+
+      return (
+
+        response.status(400),
+        Message.messageBadRequest("Usuário existente para esta pessoa")
+
+      )
+
     }
 
     const user_ = await User.create(data)
@@ -52,7 +71,7 @@ class UserController {
     return user_
   }
 
-  async show({ request }) {
+  async show({ request, response }) {
 
     /**
      * Show all profile relationship whit user
@@ -63,7 +82,14 @@ class UserController {
     const data = request.only(['id'])
 
     if (!data.id) {
-      return Message.messageNotAcceptable('Not found user')
+
+      return (
+
+        response.status(404),
+        Message.messageNotAcceptable('Not found user')
+
+      )
+
     }
 
 
@@ -84,19 +110,30 @@ class UserController {
 
   }
 
-  async update({ request }) {
+  async update({ request, response }) {
 
     const data = request.body.id
     const user = await User.find(data.id)
-    
+
     if (!user) {
-      return Message.messageNotFound('Usuário não encontrado')
+
+      return (
+
+        response.status(404),
+        Message.messageNotFound('Usuário não encontrado')
+
+      )
     }
+
     user.merge(data)
     await user.save()
 
-    return Message.messageOk('Atualizado com sucesso')
+    return (
 
+      response.status(200),
+      Message.messageOk('Atualizado com sucesso')
+
+    )
   }
 
   async destroy({ request, auth }) {
@@ -128,16 +165,27 @@ class UserController {
         (userAuth__.unidade !== '1') ||
         (userAuth__.carteira !== 'segor')) {
 
-        return Message.messageUnauthorized('Não autorizado')
+        return (
+
+          response.status(401),
+          Message.messageUnauthorized('Não autorizado')
+
+        )
       }
     }
 
 
     await user.delete()
 
-    return Message.messageUnauthorized('Deletado com sucessoS')
+    return (
+
+      response.status(200),
+      Message.messageUnauthorized('Deletado com sucesso')
+
+    )
 
   }
+
 }
 
 module.exports = UserController

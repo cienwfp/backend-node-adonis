@@ -39,8 +39,16 @@ class PersonController {
 
       //verifica se a leitura dos campos estão corretos.
       if (!valid) {
-        return (Message.messageBadRequest(errors))
+
+        return (
+
+          response.status(400),
+          Message.messageBadRequest(errors)
+
+        )
+
       }
+
       //check as regras para o usuário logado  
       const check = await Rules.rulesPerson(userAuth)
 
@@ -62,21 +70,42 @@ class PersonController {
             .fetch()
 
           if (people.rows.length === 0) {
-            return Message.messageNotFound(`Pessoa não encontrada`)
+
+            return (
+
+              response.status(404),
+              Message.messageNotFound(`Pessoa não encontrada`)
+
+            )
+
           } else {
 
             const checkResPost = await Rules.rulesResPostPeople(restritivo, posicional, people)
 
             if (checkResPost.length === 0) {
-              return Message.messageUnauthorized('Não autorizado')
+
+              return (
+
+                response.status(401),
+                Message.messageUnauthorized('Não autorizado')
+
+              )
             }
+
             return checkResPost
 
           }
         }
 
         if (typeof (onlyPhotos) !== "boolean") {
-          return Message.messageNotAcceptable('A variável onlyPhotos tem que ser true para sim ou false para não')
+
+          return (
+
+            response.status(406),
+            Message.messageNotAcceptable('A variável onlyPhotos tem que ser true para sim ou false para não')
+
+          )
+
         }
 
         if (onlyPhotos === false) {
@@ -92,8 +121,16 @@ class PersonController {
           const checkResPost = await Rules.rulesResPostPeople(restritivo, posicional, people)
 
           if (checkResPost.length === 0) {
-            return Message.messageUnauthorized('Não autorizado')
+
+            return (
+
+              response.status(401),
+              Message.messageUnauthorized('Não autorizado')
+
+            )
+
           }
+
           return checkResPost
 
         } else {
@@ -103,14 +140,27 @@ class PersonController {
           const checkResPost = await Rules.rulesResPostPeople(restritivo, posicional, people)
 
           if (checkResPost.length === 0) {
-            return Message.messageUnauthorized('Não autorizado')
+
+            return (
+
+              response.status(401),
+              Message.messageUnauthorized('Não autorizado')
+
+            )
           }
+
           return checkResPost
 
         }
+
       } else {
 
-        return Message.messageUnauthorized('Usuário não autorizado para leitura')
+        return (
+
+          response.status(401),
+          Message.messageUnauthorized('Usuário não autorizado para leitura')
+
+        )
 
       }
 
@@ -131,14 +181,31 @@ class PersonController {
           .fetch()
 
         if (people.rows.length === 0) {
-          return Message.messageNotFound(`Pessoa não enontrada`)
+
+          return (
+
+            response.status(404),
+            Message.messageNotFound(`Pessoa não enontrada`)
+
+          )
+
         } else {
+
           return people
+
         }
+
       }
 
       if (typeof (onlyPhotos) !== "boolean") {
-        return Message.messageNotAcceptable('A variável onlyPhotos tem que ser true para sim ou false para não')
+
+        return (
+
+          response.status(406),
+          Message.messageNotAcceptable('A variável onlyPhotos tem que ser true para sim ou false para não')
+
+        )
+
       }
 
       if (onlyPhotos === false) {
@@ -167,9 +234,18 @@ class PersonController {
    * POST people
    */
   async store({ request }) {
+
     let data_
 
-    const data = request._body
+    const data = request.body
+
+    console.log(request.body)
+
+    for (let prop in data) {
+      if (typeof (data[prop] === 'string') && data[prop] !== null) {
+        data[prop] = data[prop].toUpperCase()
+      }
+    }
 
     if (!data.cpf) {
 
@@ -197,21 +273,45 @@ class PersonController {
     }
 
     if (data_.rows.length !== 0) {
-      return Message.messageConflict('Pessoa já possui registro')
+
+      return (
+
+        response.status(409),
+        Message.messageConflict('Pessoa já possui registro')
+
+      )
+
     }
 
     if (!data.cpf) {
+
       data.cpf = "00000000000"
+
     } else {
+
       const cpf = Validation.validationCFP(data.cpf)
+
       if (cpf === false) {
-        return messageNotFound('CPF inválido')
+
+        return (
+
+          response.status(404),
+          Message.messageNotFound('CPF inválido')
+
+        )
+
       }
+
     }
 
     const people = await Person.create(data)
 
-    return Message.messageCreated('criado com sucesso')
+    return (
+
+      response.status(200),
+      Message.messageCreated('criado com sucesso')
+
+    )
 
   }
 
@@ -238,8 +338,16 @@ class PersonController {
 
       //verifica se a leitura dos campos estão corretos.
       if (!valid) {
-        return (Message.messageBadRequest(errors))
+
+        return (
+
+          response.status(400),
+          Message.messageBadRequest(errors)
+
+        )
+
       }
+
       //check as regras para o usuário logado  
       const check = await Rules.rulesPerson(userAuth)
 
@@ -247,26 +355,56 @@ class PersonController {
       if (check.update) {
 
         const data = request.body
+
+        for (let prop in data) {
+          if (typeof (data[prop] === 'string') && data[prop] !== null) {
+            data[prop] = data[prop].toUpperCase()
+          }
+        }
+
         const people = await Person.find(data.id)
 
         if (!people) {
-          return Message.messageNotFound('Não encontrado')
+
+          return (
+
+            response.status(404),
+            Message.messageNotFound('Não encontrado')
+
+          )
+
         }
 
         const checkResPost = await Rules.rulesResPostPeopleUpdateDelete(restritivo, posicional, people)
 
         if (!checkResPost) {
-          return Message.messageUnauthorized('Não autorizado')
+
+          return (
+
+            response.status(401),
+            Message.messageUnauthorized('Não autorizado')
+
+          )
         }
 
         people.merge(data)
         await people.save()
 
-        return Message.messageOk('Atualizado com sucesso')
+        return (
+
+          response.status(200),
+          Message.messageOk('Atualizado com sucesso')
+
+        )
 
       } else {
 
-        return Message.messageUnauthorized('Não autorizado')
+        return (
+
+          response.status(401),
+          Message.messageUnauthorized('Não autorizado')
+
+        )
 
       }
 
@@ -276,13 +414,25 @@ class PersonController {
       const people = await Person.find(data.id)
 
       if (!people) {
-        return Message.messageNotFound('Não encontrado')
+
+        return (
+
+          response.status(404),
+          Message.messageNotFound('Não encontrado')
+
+        )
+
       }
 
       people.merge(data)
       await people.save()
 
-      return Message.messageOk('Atualizado com sucesso')
+      return (
+
+        response.status(200),
+        Message.messageOk('Atualizado com sucesso')
+
+      )
 
     }
   }
@@ -307,8 +457,15 @@ class PersonController {
 
       //verifica se a leitura dos campos estão corretos.
       if (!valid) {
-        return (Message.messageBadRequest(errors))
+
+        return (
+
+          response.status(400),
+          Message.messageBadRequest(errors)
+
+        )
       }
+
       //check as regras para o usuário logado  
       const check = await Rules.rulesPerson(userAuth)
 
@@ -321,22 +478,46 @@ class PersonController {
         const people = await Person.find(peopleId)
 
         if (!people) {
-          return Message.messageNotFound('Não encontrado')
+
+          return (
+
+            response.status(404),
+            Message.messageNotFound('Não encontrado')
+
+          )
+
         }
 
         const checkResPost = await Rules.rulesResPostPeopleUpdateDelete(restritivo, posicional, people)
 
         if (!checkResPost) {
-          return Message.messageUnauthorized('Não autorizado')
+
+          return (
+
+            response.status(401),
+            Message.messageUnauthorized('Não autorizado')
+
+          )
+
         }
 
         await people.delete()
 
-        return Message.messageOk('Deletado com sucesso')
+        return (
+
+          response.status(200),
+          Message.messageOk('Deletado com sucesso')
+
+        )
 
       } else {
 
-        return Message.messageUnauthorized('Não autorizado')
+        return (
+
+          response.status(201),
+          Message.messageUnauthorized('Não autorizado')
+
+        )
 
       }
 
@@ -347,15 +528,29 @@ class PersonController {
       const people = await Person.find(peopleId)
 
       if (!people) {
-        return Message.messageNotFound('Não encontrado')
+
+        return (
+
+          response.status(404),
+          Message.messageNotFound('Não encontrado')
+
+        )
+
       }
 
       await people.delete()
 
-      return Message.messageOk('Deletado com sucesso')
+      return (
+
+        response.status(200),
+        Message.messageOk('Deletado com sucesso')
+
+      )
 
     }
+
   }
+
 }
 
 module.exports = PersonController

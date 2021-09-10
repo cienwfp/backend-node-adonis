@@ -23,7 +23,7 @@ class AddressController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index({ request, response, view }) {
+  async index({ request, response }) {
 
     if (request._body.id) {
       const address = await Address
@@ -33,12 +33,20 @@ class AddressController {
         .fetch()
 
       if (address.rows.length === 0) {
-        return Message.messageNotFound(`Não encontrado`)
+
+        return (
+
+          response.status(404),
+          Message.messageNotFound(`Não encontrado`)
+
+        )
+
       } else {
 
         return address
       }
     }
+
     const address = await Address.all()
     return address
   }
@@ -64,14 +72,23 @@ class AddressController {
    * @param {Response} ctx.response
    */
   async store({ request, response }) {
+
     const personId = request
       .only(
         [
           'personId'
         ]
       )
+
     if (!personId.personId) {
-      return Message.messageNotAcceptable('Inserir personId correto')
+
+      return (
+
+        response.status(406),
+        Message.messageNotAcceptable('Inserir personId correto')
+
+      )
+
     }
 
     const data = request
@@ -92,7 +109,20 @@ class AddressController {
     const people = await People.find(personId.personId)
 
     if (!people) {
-      return Message.messageNotFound('Não encontrado')
+
+      return (
+
+        response.status(404),
+        Message.messageNotFound('Não encontrado')
+
+      )
+
+    }
+
+    for (let prop in data) {
+      if (typeof (data[prop] === 'string') && data[prop] !== null) {
+        data[prop] = data[prop].toUpperCase()
+      }
     }
 
     const address = await Address.findOrCreate(data)
@@ -102,10 +132,15 @@ class AddressController {
     people.address = await people.address().fetch()
 
 
-    return Message.messageOk('Criado com sucesso')
-  }
-  //return Message.messageConflict('People already registared')  
+    return (
 
+      response.status(200),
+      Message.messageOk('Criado com sucesso')
+
+    )
+  }
+
+  //return Message.messageConflict('People already registared')  
 
 
   /**
@@ -173,15 +208,35 @@ class AddressController {
     return address
     */
     const data = request.body
+
+    for (let prop in data) {
+      if (typeof (data[prop] === 'string') && data[prop] !== null) {
+        data[prop] = data[prop].toUpperCase()
+      }
+    }
+
     const address = await Address.find(data.id)
 
     if (!address) {
-      return Message.messageNotFound('Não encontrado')
+
+      return (
+
+        response.status(404),
+        Message.messageNotFound('Não encontrado')
+
+      )
     }
+
     address.merge(data)
     await address.save()
 
-    return Message.messageOk('Atualizado com sucesso')
+    return (
+
+      response.status(200),
+      Message.messageOk('Atualizado com sucesso')
+
+    )
+
   }
 
   /**
@@ -210,13 +265,26 @@ class AddressController {
     const address = await Address.find(addressId)
 
     if (!address) {
-      return Message.messageNotFound('Não encontrado')
+
+      return (
+
+        response.status(404),
+        Message.messageNotFound('Não encontrado')
+
+      )
     }
+
     await address.delete()
 
-    return Message.messageOk('Deletado com sucesso')
+    return (
+
+      response.status(200),
+      Message.messageOk('Deletado com sucesso')
+
+    )
 
   }
+
 }
 
 module.exports = AddressController
