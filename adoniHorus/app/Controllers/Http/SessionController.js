@@ -12,15 +12,23 @@ class SessionController {
 
     const { username, password } = request.all()
 
-    const user = await User.findBy('username', username)
+    const user = await User
+    .query()
+    .where('username', username)
+    .with('profile')
+    .fetch()
 
-    if (user) {
+    if (user.rows.lenght !== 0) {
 
-      if (user.enabled) {
+      if (user.rows[0].$attributes.enabled) {
 
         try {
 
-          const token = await auth.attempt(username, password)
+          const token = await auth.attempt(username, password,
+            {
+              "user": user
+            }
+          )
 
           return token
 
@@ -32,7 +40,7 @@ class SessionController {
             Message.messageUnauthorized('Senha incorreta')
 
           )
-        
+
         }
 
       } else {
@@ -41,9 +49,9 @@ class SessionController {
 
           response.status(200),
           Message.messageUnauthorized('Usuário não habilitado')
-      
+
         )
-      
+
       }
 
     } else {
