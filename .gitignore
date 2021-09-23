@@ -1,11 +1,10 @@
-# Node modules
-node_modules
+adonisHorus/node_modules
+adonisHorus/.env
 
-# Adonis directory for storing tmp files
+serverrStreamDocument/node_modules
+serverrStreamDocument/.env
+
 tmp
-
-# Environment variables, never commit this file
 .env
 
-# The development sqlite file
 database/*.sqlite
