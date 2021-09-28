@@ -1,8 +1,8 @@
-adonisHorus/node_modules
-adonisHorus/.env
+adoniHorus/node_modules
+adoniHorus/.env
 
-serverrStreamDocument/node_modules
-serverrStreamDocument/.env
+serverStreamDocument/node_modules
+serverStreamDocument/.env
 
 tmp
 .env
