@@ -1,51 +1,32 @@
 const mongoose = require("mongoose")
 const { find } = require("./Document")
 const Document = require("./Document")
+const express = require('express');
+const route = require('./router')
+const cors = require('cors')
 
-mongoose.connect("mongodb://192.168.1.136:27017/documentTest", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useFindAndModify: false,
-  useCreateIndex: true,
-})
+const app = express();
+let port = 3333;
 
-const io = require("socket.io")(3333, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"],
-  },
-})
+app.use(route);
 
-const defaultValue = ""
-
-io.on("connection", socket => {
-
-  socket.on("initial_data", async () => {
-    Document.find().then(docs => {
-      console.log(docs)
-      socket.emit("initial_data", docs);
-    });
-  })
-
-  socket.on("get-document", async documentId => {
-    const document = await findOrCreateDocument(documentId)
-    socket.join(documentId)
-    socket.emit("load-document", document.data)
-
-    socket.on("send-changes", delta => {
-      socket.broadcast.to(documentId).emit("receive-changes", delta)
+mongoose
+    .connect("mongodb://192.168.1.136:27017/documentTest", {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useFindAndModify: false,
+        useCreateIndex: true,
+    })
+    .then(() => {
+        console.log("db connected")
+        return (
+            app.listen(process.env.port || port, () => {
+                console.log('Servidor em execução no porta: ' + port);
+            })
+        )
+    })
+    .catch(() => {
+        console.log('db no connected')
     })
 
-    socket.on("save-document", async data => {
-      await Document.findByIdAndUpdate(documentId, { data })
-    })
-  })
-})
 
-async function findOrCreateDocument(id) {
-  if (id == null) return
-
-  const document = await Document.findById(id)
-  if (document) return document
-  return await Document.create({ _id: id, data: defaultValue })
-}
