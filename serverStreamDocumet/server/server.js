@@ -1,12 +1,22 @@
 const mongoose = require("mongoose")
-const { find } = require("./Document")
-const Document = require("./Document")
 const express = require('express');
 const route = require('./router')
 const cors = require('cors')
+const bodyParser = require("body-parser");
+const consign = require('consign');
 
 const app = express();
 let port = 3333;
+
+app.use(
+    express.urlencoded({
+        extended: true
+    })
+)
+
+app.use(express.json({limit: '50mb'}))
+
+app.use(cors())
 
 app.use(route);
 
