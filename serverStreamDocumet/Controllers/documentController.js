@@ -25,7 +25,7 @@ module.exports = {
     upload:
 
         async function (req, res) {
-        
+
             console.log(req.body)
 
             Document.findOne({ _id: req.params.id }, (err, document) => {
@@ -37,8 +37,8 @@ module.exports = {
                 }
 
                 console.log(document)
-                
-                document.data = req.body.data.data.data
+
+                document.data = req.body.data
                 document
                     .save()
                     .then(() => {
@@ -50,8 +50,29 @@ module.exports = {
                             message: 'Movie not updated!',
                         })
                     })
- 
+
             })
-        }
+        },
+
+    new:
+
+        async function (req, res) {
+
+            console.log(req.body)
+
+            /*  Document.save(req.body)
+             .then(() => {
+                 return res.status(200).json(document)
+             })
+             .catch(error => {
+                 return res.status(404).json({
+                     error,
+                     message: 'Movie not updated!',
+                 })
+             })
+
+     }) */
+        },
+
 
 };
